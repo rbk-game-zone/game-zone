@@ -14,6 +14,7 @@ db.Game = require("./game.model.js")(sequelize);
 db.Score = require("./score.model.js")(sequelize);
 db.Message = require("./message.model.js")(sequelize);
 db.Room = require("./room.model.js")(sequelize);
+db.UserRoom = require("./user_room.model.js")(sequelize);
 
 // Set up relationships
 db.User.hasMany(db.Score, { foreignKey: 'user_id' });
@@ -29,8 +30,9 @@ db.Message.belongsTo(db.User, { foreignKey: 'user_id' });
 db.Room.hasMany(db.Message, { foreignKey: 'room_id' });
 db.Message.belongsTo(db.Room, { foreignKey: 'room_id' });
 
-db.User.hasMany(db.Room, { foreignKey: 'created_by' });
-db.Room.belongsTo(db.User, { foreignKey: 'created_by' });
+// Update room-user relationships
+db.User.belongsToMany(db.Room, { through: db.UserRoom, foreignKey: 'user_id' });
+db.Room.belongsToMany(db.User, { through: db.UserRoom, foreignKey: 'room_id' });
 
 db.sequelize.sync({ force: false , alter: false } )
   .then(() => {
