@@ -29,8 +29,8 @@ const initialState: AuthState = {
 
 export const loginUser = createAsyncThunk(
     'auth/login',
-    async ({ username,email, password }: { username: string, email: string, password: string }) => {
-        const response = await  axios.post('http://localhost:8000/api/user/login', { username, email ,password });
+    async ({ email, username, password }: { email: string, username: string, password: string }) => {
+        const response = await axios.post('http://localhost:8000/api/user/login', { email, username, password });
         return response.data;
     }
 );
@@ -84,6 +84,7 @@ const authSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message || 'Registration failed';
             })
+            
             
     }
 });

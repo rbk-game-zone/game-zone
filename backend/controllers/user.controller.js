@@ -69,7 +69,8 @@ module.exports = {
                 last_name, 
                 age, 
                 address, 
-                sexe 
+                sexe,
+                role
             } = req.body;
 
             // Check for required fields
@@ -101,12 +102,15 @@ module.exports = {
                 age,
                 address,
                 sexe,
-                role: 'player' 
+                role: role || 'player'
             });
 
             // Generate JWT token
             const accessToken = jwt.sign(
-                { userId: user.id },
+                { 
+                    userId: user.id,
+                    role: user.role
+                },
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: "72h" }
             );
@@ -118,6 +122,8 @@ module.exports = {
                     username: user.username,
                     email: user.email,
                     role: user.role,
+                    first_name: user.first_name,
+                    last_name: user.last_name
                 },
                 accessToken
             });
