@@ -12,6 +12,8 @@ import './App.css'
 import Chat from "./components/Chat";
 import AdminPanel from "../../games/AdminPanel.jsx";
 import GameLobby from "../../games/GameLobby.jsx";
+import Navbar from './components/Navbar';
+import Home from './components/home';
 
 function App() {
     return (

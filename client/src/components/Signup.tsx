@@ -40,8 +40,8 @@ const Signup: React.FC = () => {
             <div className="card signup-card shadow-lg p-4">
                 <h2 className="text-center mb-4">Sign Up</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-row">
-                        <div className="col">
+                    <div className="row">
+                        <div className="col-md-6 mb-3">
                             <label className="form-label">Username:</label>
                             <input
                                 type="text"
@@ -52,7 +52,7 @@ const Signup: React.FC = () => {
                                 required
                             />
                         </div>
-                        <div className="col">
+                        <div className="col-md-6 mb-3">
                             <label className="form-label">Email:</label>
                             <input
                                 type="email"
@@ -64,8 +64,8 @@ const Signup: React.FC = () => {
                             />
                         </div>
                     </div>
-                    <div className="form-row">
-                        <div className="col">
+                    <div className="row">
+                        <div className="col-md-6 mb-3">
                             <label className="form-label">Password:</label>
                             <input
                                 type="password"
@@ -76,7 +76,7 @@ const Signup: React.FC = () => {
                                 required
                             />
                         </div>
-                        <div className="col">
+                        <div className="col-md-6 mb-3">
                             <label className="form-label">First Name:</label>
                             <input
                                 type="text"
@@ -88,8 +88,8 @@ const Signup: React.FC = () => {
                             />
                         </div>
                     </div>
-                    <div className="form-row">
-                        <div className="col">
+                    <div className="row">
+                        <div className="col-md-6 mb-3">
                             <label className="form-label">Last Name:</label>
                             <input
                                 type="text"
@@ -100,7 +100,7 @@ const Signup: React.FC = () => {
                                 required
                             />
                         </div>
-                        <div className="col">
+                        <div className="col-md-6 mb-3">
                             <label className="form-label">Age:</label>
                             <input
                                 type="number"
@@ -112,8 +112,8 @@ const Signup: React.FC = () => {
                             />
                         </div>
                     </div>
-                    <div className="form-row">
-                        <div className="col">
+                    <div className="row">
+                        <div className="col-md-6 mb-3">
                             <label className="form-label">Address:</label>
                             <input
                                 type="text"
@@ -124,7 +124,7 @@ const Signup: React.FC = () => {
                                 required
                             />
                         </div>
-                        <div className="col">
+                        <div className="col-md-6 mb-3">
                             <label className="form-label">Gender:</label>
                             <select
                                 className="form-select"

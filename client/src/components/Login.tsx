@@ -32,7 +32,7 @@ const Login: React.FC = () => {
         <div className="login-container container mt-5">
             <div className="row justify-content-center">
                 <div className="col-md-6 col-lg-4">
-                    <div className="card shadow">
+                    <div className="card login-card shadow">
                         <div className="card-body">
                             <h2 className="card-title text-center mb-4">Login</h2>
                             <form onSubmit={handleSubmit}>
