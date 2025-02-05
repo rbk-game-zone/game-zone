@@ -9,12 +9,13 @@ const Chat: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<{ userId: string; content: string }[]>([]);
   const [roomName, setRoomName] = useState<string>("");
-
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  console.log("usersssss",user.id);
   // Handle receiving messages
   useEffect(() => {
     // Join the room when the component mounts
     if (roomId) {
-      socket.emit("joinRoom", { user_id: userId, room_id: roomId });
+      socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
     }
 
     // Listen for new messages
@@ -30,14 +31,14 @@ const Chat: React.FC = () => {
   // Join a room
   const joinRoom = () => {
     if (roomId.trim() !== "") {
-      socket.emit("joinRoom", { user_id: userId, room_id: roomId });
+      socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
     }
   };
 
   // Send a message
   const sendMessage = () => {
     if (message.trim() !== "") {
-      socket.emit("sendMessage", { room_id: roomId, user_id: userId, content: message });
+      socket.emit("sendMessage", { room_id: roomId, user_id: user.id, content: message });
       setMessage(""); // Clear input after sending
     }
   };
@@ -74,14 +75,14 @@ const Chat: React.FC = () => {
         <button onClick={joinRoom}>Join Room</button>
       </div>
 
-      <div>
+      {/* <div>
         <input
           type="text"
           placeholder="Your User ID"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
         />
-      </div>
+      </div> */}
 
       <div className="chat-box">
         {messages.map((msg, index) => (

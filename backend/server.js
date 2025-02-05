@@ -4,9 +4,11 @@ const http = require("http");
 const cors = require("cors");
 const socketHandler = require("./socket");
 const db = require("./model");
-
+const bcrypt = require('bcrypt');
 const app = express();
 const server = http.createServer(app);
+const jwt = require('jsonwebtoken');
+const userRoute = require('./router/user.router')
 const io = require("socket.io")(server, {
   cors: { origin: "*" },
 });
@@ -18,7 +20,7 @@ app.use(express.json());
 // Import Routes
 const chatRoutes = require("./routes/chat.routes");
 app.use("/api/chat", chatRoutes);
-
+app.use('/api/user', userRoute)
 // Handle WebSockets
 socketHandler(io);
 

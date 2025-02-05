@@ -5,17 +5,25 @@ import { loginUser } from '../store/authSlice';
 import { AppDispatch } from '../store/store';
 
 const Login: React.FC = () => {
-    const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await dispatch(loginUser({ username, email, password })).unwrap();
-            navigate('/dashboard');
+            await dispatch(loginUser({ email, username, password })).unwrap();
+            // Check user role and navigate accordingly
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            console.log(user.role);
+            
+            if (user.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (error) {
             alert('Login failed. Please check your credentials.');
         }
@@ -29,8 +37,16 @@ const Login: React.FC = () => {
                     <label>Email or Username:</label>
                     <input
                         type="text"
-                        onChange={(e) => 
-                             email?( setEmail(e.target.value)):( setUsername(e.target.value))}
+                        value={email || username}
+                        onChange={(e) => {
+                            if (e.target.value.includes('@')) {
+                                setEmail(e.target.value);
+                                setUsername('');
+                            } else {
+                                setUsername(e.target.value);
+                                setEmail('');
+                            }
+                        }}
                         required
                     />
                 </div>
