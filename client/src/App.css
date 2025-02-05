@@ -1,15 +1,28 @@
-.App {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  text-align: center;
+.chat-container {
+  width: 400px;
+  margin: 20px auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.chat-box {
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.chat-message {
+  margin-bottom: 5px;
 }
 
 input {
-  margin: 5px;
-  padding: 10px;
+  margin-right: 5px;
+  padding: 5px;
 }
 
 button {
-  padding: 10px 15px;
+  padding: 5px 10px;
 }
