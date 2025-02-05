@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../store/authSlice';
 import { AppDispatch } from '../store/store';
 
@@ -29,44 +29,40 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center min-vh-100">
-            <div className="card login-card shadow-lg p-4">
-                <h2 className="text-center mb-4">Login</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <label className="form-label">Email or Username:</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={email || username}
-                            onChange={(e) => {
-                                if (e.target.value.includes('@')) {
-                                    setEmail(e.target.value);
-                                    setUsername('');
-                                } else {
-                                    setUsername(e.target.value);
-                                    setEmail('');
-                                }
-                            }}
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Password:</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn btn-primary w-100">Login</button>
-                </form>
-                <p className="mt-3 text-center">
-                    Don't have an account? <a href="/signup" className="text-primary">Sign Up</a>
-                </p>
-            </div>
+        <div className="login-container">
+            <h2>Login</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>Email or Username:</label>
+                    <input
+                        type="text"
+                        value={email || username}
+                        onChange={(e) => {
+                            if (e.target.value.includes('@')) {
+                                setEmail(e.target.value);
+                                setUsername('');
+                            } else {
+                                setUsername(e.target.value);
+                                setEmail('');
+                            }
+                        }}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Password:</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p>
+                <Link to="/forgot-password">Forgot Password?</Link>
+            </p>
         </div>
     );
 };

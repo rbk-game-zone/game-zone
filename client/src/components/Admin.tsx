@@ -28,7 +28,7 @@ const Admin: React.FC = () => {
         fetchUsers();
     }, []);
 
-    const handleUpdateUser = (updatedUser) => {
+    const handleUpdateUser = (updatedUser ) => {
         setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
         setEditingUser(null);
     };
@@ -78,6 +78,7 @@ const Admin: React.FC = () => {
                                         <td>{user.username}</td>
                                         <td>{user.email}</td>
                                         <td>{user.role}</td>
+                                        
                                         <td>
                                             {editingUser === user ? (
                                                 <>
