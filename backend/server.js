@@ -10,6 +10,7 @@ const server = http.createServer(app);
 const jwt = require('jsonwebtoken');
 const userRoute = require('./router/user.router');
 const gameRoute = require('./routes/gameRoutes');
+const path = require('path');
 
 const io = require("socket.io")(server, {
   cors: { origin: "*" },
@@ -24,16 +25,22 @@ app.use(express.static('public'));
 const chatRoutes = require("./routes/chat.routes");
 app.use("/api/chat", chatRoutes);
 app.use('/api/user', userRoute);
-app.use('/api/games', gameRoute);
+app.use('/api', gameRoute);
+
+// Serve files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+// Also serve files from the uploads directory if needed
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Handle WebSockets
 socketHandler(io);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 // Sync database and start server
 db.sequelize.sync().then(() => {
   console.log("Database synchronized");
   server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
   });
 });
