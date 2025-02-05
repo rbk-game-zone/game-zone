@@ -8,7 +8,9 @@ const bcrypt = require('bcrypt');
 const app = express();
 const server = http.createServer(app);
 const jwt = require('jsonwebtoken');
-const userRoute = require('./router/user.router')
+const userRoute = require('./router/user.router');
+const gameRoute = require('./routes/gameRoutes');
+
 const io = require("socket.io")(server, {
   cors: { origin: "*" },
 });
@@ -16,11 +18,13 @@ const io = require("socket.io")(server, {
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 // Import Routes
 const chatRoutes = require("./routes/chat.routes");
 app.use("/api/chat", chatRoutes);
-app.use('/api/user', userRoute)
+app.use('/api/user', userRoute);
+app.use('/api/games', gameRoute);
 // Handle WebSockets
 socketHandler(io);
 
