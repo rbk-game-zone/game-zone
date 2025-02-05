@@ -9,7 +9,8 @@ import ChangePassword from './components/ChangePassword';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import './App.css'
-
+import Navbar from './components/Navbar';
+import Home from './components/home';
 function App() {
     return (
         <Router>
