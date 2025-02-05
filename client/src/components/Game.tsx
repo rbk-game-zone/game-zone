@@ -1,62 +1,68 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Phaser from 'phaser';
-import StartScene from '../../../game-joi/src/scenes/StartScene';
-import GameScene from '../../../game-joi/src/scenes/GameScene';
-import GameOverScene from '../../../game-joi/src/scenes/GameOverScene';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
+interface GameData {
+    id: number;
+    title: string;
+    description: string;
+    game_file: string;
+    thumbnail: string;
+}
 
 const Game: React.FC = () => {
-    const gameRef = useRef<Phaser.Game | null>(null);
-    const [gameData, setGameData] = useState(null);
-
-    useEffect(() => {
-        const config: Phaser.Types.Core.GameConfig = {
-            type: Phaser.AUTO,
-            width: 800,
-            height: 600,
-            parent: 'game-container',
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    gravity: { y: 200 }
-                }
-            },
-            scene: [StartScene, GameScene, GameOverScene]
-        };
-
-        gameRef.current = new Phaser.Game(config);
-
-        return () => {
-            if (gameRef.current) {
-                gameRef.current.destroy(true);
-            }
-        };
-    }, []);
+    const { id } = useParams<{ id: string }>();
+    const [gameUrl, setGameUrl] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchGame = async () => {
             try {
-                const response = await axios.get('/api/games/1'); // Replace with your game ID
-                setGameData(response.data);
-            } catch (error) {
-                console.error('Error fetching game:', error);
+                // Fetch the game data
+                const response = await axios.get(`/api/games/${id}`);
+                const gameData = response.data;
+
+                if (!gameData || !gameData.game_file) {
+                    throw new Error('Game file path is missing');
+                }
+
+                // Construct the full URL for the game file
+                const gameFileUrl = `http://localhost:8000/${gameData.game_file}`;
+                console.log('Game URL:', gameFileUrl); // Debug log
+
+                // Set the game URL directly since it's already a file path
+                setGameUrl(gameFileUrl);
+                setLoading(false);
+            } catch (err) {
+                console.error('Error fetching game:', err);
+                setError('Failed to load the game. Please try again later.');
+                setLoading(false);
             }
         };
 
-        fetchGame();
-    }, []);
+        if (id) {
+            fetchGame();
+        }
+    }, [id]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
-        <div id="game-container">
-            {gameData && (
-                <>
-                    <img src={gameData.thumbnail} alt="Game Thumbnail" />
-                    <iframe 
-                        src={gameData.game_file} 
-                        style={{ width: '100%', height: '100vh' }}
-                        title="Game"
-                    />
-                </>
+        <div id="game-container" style={{ width: '100%', height: '100vh' }}>
+            {gameUrl && (
+                <iframe
+                    src={gameUrl}
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                    title="Game"
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                />
             )}
         </div>
     );

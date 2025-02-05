@@ -10,8 +10,8 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import './App.css'
 import Chat from "./components/Chat";
-import AdminPanel from "../../games/AdminPanel.jsx";
-import GameLobby from "../../games/GameLobby.jsx";
+// import AdminPanel from "../../games/ad";
+// import GameLobby from "../../games/GameLobby.jsx";
 
 function App() {
     return (
@@ -26,9 +26,9 @@ function App() {
                 </Route>
                 
                 <Route element={<ProtectedRoute allowedRoles={['player']} />}>
-                    <Route path="/game" element={<GameLobby />} />
+                    <Route path="/game" element={<Game />} />
                     <Route path="/chat" element={<Chat />} />
-                    <Route path="/panel" element={<AdminPanel />} />
+                    {/* <Route path="/panel" element={<AdminPanel />} /> */}
                 </Route>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/change-password" element={<ChangePassword />} />
