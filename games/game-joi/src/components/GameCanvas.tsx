@@ -6,7 +6,7 @@ import GameOverScene from '../scenes/GameOverScene';
 
 const GameCanvas: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
-  const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#A833FF', '#33FFF5'];
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const config: Phaser.Types.Core.GameConfig = {
@@ -18,32 +18,42 @@ const GameCanvas: React.FC = () => {
       physics: {
         default: 'arcade',
         arcade: {
-          debug: false
-        }
+          debug: false,
+        },
       },
-      backgroundColor: '#0000FF',
+      backgroundColor: '#0000FF', // Initial background color
     };
 
+    // Initialize the Phaser game
     gameRef.current = new Phaser.Game(config);
 
-    let colorIndex = 0;
-    const interval = setInterval(() => {
-      colorIndex = (colorIndex + 1) % colors.length;
-      const gameContainer = document.getElementById('game-container');
-      if (gameContainer) {
-        gameContainer.style.backgroundColor = colors[colorIndex];
-      }
-    }, 10000);
+    // Function to change the background color
+    const changeBackgroundColor = () => {
+      const colors = ['#0000FF', '#FF0000', '#00FF00', '#FFFF00', '#00FFFF', '#FF00FF']; // Add more colors if needed
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-    return () => {
-      clearInterval(interval);
       if (gameRef.current) {
-        gameRef.current.destroy(true);
+        gameRef.current.config.backgroundColor = randomColor;
+        // Force the renderer to update the background color
+        gameRef.current.renderer.setBackgroundColor(randomColor);
+      }
+    };
+
+    // Set an interval to change the background color every 10 seconds
+    intervalRef.current = setInterval(changeBackgroundColor, 10000);
+
+    // Cleanup function
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current); // Clear the interval
+      }
+      if (gameRef.current) {
+        gameRef.current.destroy(true); // Destroy the Phaser game instance
       }
     };
   }, []);
 
-  return <div id="game-container" style={{ width: '1600px', height: '800px' }} />;
+  return <div id="game-container" />;
 };
 
 export default GameCanvas;
