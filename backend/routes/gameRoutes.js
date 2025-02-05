@@ -7,10 +7,11 @@ const router = express.Router();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/games/');
+        const dir = path.join(__dirname, '../public/games'); // Ensure this path is correct
+        cb(null, dir);
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname);
+        cb(null, file.originalname); // Use the original file name
     },
 });
 

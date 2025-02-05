@@ -20,7 +20,7 @@ const AdminPanel = () => {
         formData.append('thumbnail', thumbnail);
 
         try {
-            await axios.post('/api/games/upload', formData);
+            await axios.post('http://localhost:8000/api/games/upload', formData);
             alert('Game uploaded successfully!');
         } catch (error) {
             console.error("Error uploading game:", error);
