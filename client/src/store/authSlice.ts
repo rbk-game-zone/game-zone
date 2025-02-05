@@ -20,12 +20,11 @@ interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
 }
-
 const initialState: AuthState = {
-    user: null, // Initialize user as null
+    user: JSON.parse(localStorage.getItem("user") as string) as User  || null, // Initialize user as null
     status: 'idle',
     error: null,
-    token: null,
+    token: localStorage.getItem("token")|| null,
     isAuthenticated: false
 };
 
@@ -63,6 +62,7 @@ const authSlice = createSlice({
             state.token = localStorage.getItem('token');
         },
         deleteUser: (state, action) => {
+            state.user=action.payload
             state.user = null;
             state.token = null;
             state.isAuthenticated = false;
