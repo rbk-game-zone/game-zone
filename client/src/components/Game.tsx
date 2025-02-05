@@ -1,47 +1,71 @@
-import React, { useEffect } from 'react';
-import Phaser from 'phaser';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
+interface GameData {
+    id: number;
+    title: string;
+    description: string;
+    game_file: string;
+    thumbnail: string;
+}
 
 const Game: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
+    const [gameUrl, setGameUrl] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
     useEffect(() => {
-        const config: Phaser.Types.Core.GameConfig = {
-            type: Phaser.AUTO,
-            width: 800,
-            height: 600,
-            parent: 'game-container',
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    gravity: { y: 300 },
-                    debug: false
+        const fetchGame = async () => {
+            try {
+                // Fetch the game data
+                const response = await axios.get(`/api/games/${id}`);
+                const gameData = response.data;
+
+                if (!gameData || !gameData.game_file) {
+                    throw new Error('Game file path is missing');
                 }
-            },
-            scene: {
-                preload: preload,
-                create: create,
-                update: update
+
+                // Construct the full URL for the game file
+                const gameFileUrl = `http://localhost:8000/${gameData.game_file}`;
+                console.log('Game URL:', gameFileUrl); // Debug log
+
+                // Set the game URL directly since it's already a file path
+                setGameUrl(gameFileUrl);
+                setLoading(false);
+            } catch (err) {
+                console.error('Error fetching game:', err);
+                setError('Failed to load the game. Please try again later.');
+                setLoading(false);
             }
         };
 
-        const game = new Phaser.Game(config);
-
-        function preload(this: Phaser.Scene) {
-            // Load game assets here
+        if (id) {
+            fetchGame();
         }
+    }, [id]);
 
-        function create(this: Phaser.Scene) {
-            // Create game objects here
-        }
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
-        function update(this: Phaser.Scene) {
-            // Update game logic here
-        }
+    if (error) {
+        return <div>{error}</div>;
+    }
 
-        return () => {
-            game.destroy(true);
-        };
-    }, []);
-
-    return <div id="game-container"></div>;
+    return (
+        <div id="game-container" style={{ width: '100%', height: '100vh' }}>
+            {gameUrl && (
+                <iframe
+                    src={gameUrl}
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                    title="Game"
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                />
+            )}
+        </div>
+    );
 };
 
 export default Game; 
