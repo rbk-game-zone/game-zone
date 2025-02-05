@@ -141,7 +141,7 @@ module.exports = {
     getAllUsers: async (req, res) => {
         try {
             const users = await User.findAll({
-                attributes: ['id', 'username', 'email', 'role'] // Select specific fields to return
+                attributes: ['id', 'username', 'email', 'role','first_name','last_name','age','address','sexe'] // Select specific fields to return
             });
             res.json(users);
         } catch (error) {

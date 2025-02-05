@@ -19,7 +19,11 @@ const Profile = () => {
     username: user?.username || '',
     email: user?.email || '',
     sexe: user?.sexe || '',
-    role: user?.role || ''
+    role: user?.role || '',
+    address: user?.address || '',
+    firstname: user?.first_name || '',
+    lastname: user?.last_name || '',
+    age: user?.age || ''
   });
 
   // Debug logging
@@ -63,7 +67,7 @@ const Profile = () => {
           confirmButtonText: 'OK',
         });
       }
-    } catch (error) {
+    } catch (error :any) {
       console.error('Error sending password reset email:', error);
       Swal.fire({
         title: 'Error!',
@@ -97,7 +101,7 @@ const Profile = () => {
         text: 'Your profile has been successfully updated.',
       });
       setEditMode(false);
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error updating profile:', error);
       Swal.fire({
         icon: 'error',
@@ -114,14 +118,32 @@ const Profile = () => {
         <div className="profile-content">
           <div className="profile-card">
             <div className="profile-header">
-             
-              <h2 className="profile-name">{user?.username}</h2>
+              <h2 className="profile-name">{user?.firstname} {user?.lastname}</h2>
               <p className="profile-role">{user?.role}</p>
+              <p className="profile-email">{user?.email}</p>
+              <p className="profile-sexe">{user?.sexe}</p>
+              <p className="profile-address">{user?.address}</p>
             </div>
             
             <div className="profile-details">
               {editMode ? (
                 <>
+                  <div className="profile-field">
+                    <label>First Name:</label>
+                    <input
+                      type="text"
+                      value={profileData.firstname}
+                      onChange={(e) => setProfileData({...profileData, firstname: e.target.value})}
+                    />
+                  </div>
+                  <div className="profile-field">
+                    <label>Last Name:</label>
+                    <input
+                      type="text"
+                      value={profileData.lastname}
+                      onChange={(e) => setProfileData({...profileData, lastname: e.target.value})}
+                    />
+                  </div>
                   <div className="profile-field">
                     <label>Username:</label>
                     <input
@@ -138,30 +160,18 @@ const Profile = () => {
                       onChange={(e) => setProfileData({...profileData, email: e.target.value})}
                     />
                   </div>
-                  <div className="profile-field">
-                    <label>Role:</label>
-                    <select
-                      value={profileData.role}
-                      onChange={(e) => setProfileData({...profileData, role: e.target.value})}
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                  <div className="profile-field">
-                    <label>Sexe:</label>
-                    <select
-                      value={profileData.sexe}
-                      onChange={(e) => setProfileData({...profileData, sexe: e.target.value})}
-                    >
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
+                  {/* Role update input removed from user's own profile */}
                 </>
               ) : (
                 <>
+                  <div className="detail-item">
+                    <span className="detail-label">First Name</span>
+                    <span className="detail-value">{user?.first_name}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Last Name</span>
+                    <span className="detail-value">{user?.last_name}</span>
+                  </div>
                   <div className="detail-item">
                     <span className="detail-label">Email</span>
                     <span className="detail-value">{user?.email}</span>
@@ -173,12 +183,6 @@ const Profile = () => {
                   <div className="detail-item">
                     <span className="detail-label">Sexe</span>
                     <span className="detail-value">{user?.sexe}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Account Created</span>
-                    <span className="detail-value">
-                      {formatDate(user?.createdAt)}
-                    </span>
                   </div>
                 </>
               )}
