@@ -1,10 +1,21 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 import './index.css'
 import App from './App.tsx'
+import { setCredentials } from './store/authSlice.ts';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+// Check for existing token on app load
+const token = localStorage.getItem('token');
+if (token) {
+  store.dispatch(setCredentials({ token }));
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Provider store={store}>
     <App />
-  </StrictMode>,
+    </Provider>
+  </React.StrictMode>,
 )
