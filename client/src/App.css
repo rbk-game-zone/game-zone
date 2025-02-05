@@ -8,19 +8,16 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.8); /* Light opacity for slight transparency */
-    border-radius: 10px;
+    
 }
 
 .card {
-    border: none;
+    border: none; 
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.85); /* Slightly transparent white */
-    padding: 20px;
 }
 
 .card.shadow {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Keeps a subtle shadow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card-title {
@@ -39,14 +36,11 @@
     border: 1px solid #ddd;
     padding: 10px;
     font-size: 1rem;
-    background: rgba(255, 255, 255, 0.7); /* Semi-transparent input background */
-    color: #333;
 }
 
 .form-control:focus {
     border-color: #80bdff;
     box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
-    background: rgba(255, 255, 255, 0.9);
 }
 
 .btn-primary {
@@ -74,7 +68,6 @@
 .text-decoration-none:hover {
     text-decoration: underline;
 }
-
 /* Make sure the container takes up full height */
 .signup-container {
     background-image: url('your-image-url.jpg');
