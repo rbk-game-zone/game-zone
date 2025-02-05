@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../store/authSlice';
 import { AppDispatch } from '../store/store';
 
@@ -61,6 +61,9 @@ const Login: React.FC = () => {
                 </div>
                 <button type="submit">Login</button>
             </form>
+            <p>
+                <Link to="/forgot-password">Forgot Password?</Link>
+            </p>
         </div>
     );
 };
