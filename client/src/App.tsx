@@ -3,6 +3,8 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Admin from './components/Admin';
 import ProtectedRoute from './components/ProtectedRoute';
+import Game from './components/Game';
+import Profile from './components/Profile';
 import './App.css'
 
 function App() {
@@ -18,8 +20,9 @@ function App() {
                 </Route>
                 
                 <Route element={<ProtectedRoute allowedRoles={['player']} />}>
-                    {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+                    <Route path="/game" element={<Game />} />
                 </Route>
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </Router>
     );
