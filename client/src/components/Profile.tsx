@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { updateUser } from '../store/authSlice';
+import ChangePassword from './ChangePassword';
 
 const Profile = () => {
   console.log("Retrieving user data:", localStorage.getItem('user'));
   const user = JSON.parse(localStorage.getItem('user') || 'null') || useSelector((state) => state.auth.user);
   console.log("Parsed user data:", user);
   // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [users, setUser] = useState(user);
@@ -49,25 +50,26 @@ const Profile = () => {
 
   const handleChangePassword = async () => {
     try {
-      const response = await axios.post(`http://localhost:8000/api/user/forgot-password`, {
-        email: user.email,
-      });
-      
+      const response = await axios.post(
+        `http://localhost:8000/api/user/forgot-password`,
+        { email: user.email }
+      );
+
       if (response.data.success) {
         Swal.fire({
           title: 'Success!',
-          text: 'Password reset link has been sent to your email',
+          text: 'Password reset link has been sent to your email.',
           icon: 'success',
-          confirmButtonText: 'OK'
+          confirmButtonText: 'OK',
         });
       }
-    } catch (error :any) {
+    } catch (error) {
       console.error('Error sending password reset email:', error);
       Swal.fire({
         title: 'Error!',
-        text: error.response?.data?.message || 'Failed to send password reset email',
+        text: error.response?.data?.message || 'Failed to send password reset email.',
         icon: 'error',
-        confirmButtonText: 'OK'
+        confirmButtonText: 'OK',
       });
     }
   };
@@ -75,7 +77,7 @@ const Profile = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      console.log('Updating profile with data:', profileData); // Log the payload
+      console.log('Updating profile with data:', profileData);
       const response = await axios.put(
         `http://localhost:8000/api/user/users/${user.id}`,
         profileData,
@@ -84,11 +86,10 @@ const Profile = () => {
         }
       );
 
-      // Update the local user state with the new data
       const updatedUser = response.data.user;
-      setUser(updatedUser); // Update the local user state
-      localStorage.setItem('user', JSON.stringify(updatedUser)); // Update localStorage
-      dispatch(updateUser(updatedUser)); // Update Redux store
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      dispatch(updateUser(updatedUser));
 
       Swal.fire({
         icon: 'success',
@@ -109,14 +110,11 @@ const Profile = () => {
   return (
     <div>
       <div className="profile-container">
-        <h1 className="profile-title">Profile Dashboard</h1>
-        
+        <h1 className="profile-title">Profile Dashboard</h1>  
         <div className="profile-content">
           <div className="profile-card">
             <div className="profile-header">
-              <div className="profile-avatar">
-                {user?.username?.charAt(0).toUpperCase()}
-              </div>
+             
               <h2 className="profile-name">{user?.username}</h2>
               <p className="profile-role">{user?.role}</p>
             </div>
@@ -204,7 +202,7 @@ const Profile = () => {
             )}
             <button 
               className="profile-button change-password-button" 
-              onClick={handleChangePassword}
+              onClick={() => navigate('/change-password')}
             >
               Change Password
             </button>

@@ -202,45 +202,91 @@ module.exports = {
         }
     },
     forgotPassword: async (req, res) => {
+        const { email } = req.body;
+    
         try {
-            const { email } = req.body;
+            if (!process.env.JWT_SECRET) {
+                throw new Error('JWT_SECRET is not defined in environment variables');
+            }
+    
             const user = await User.findOne({ where: { email } });
-            
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
             }
-
-            // Generate reset token
-            const resetToken = generateResetToken(user);
-            
-            // Create reset password URL
-            const resetUrl = `http://localhost:5173/forget-password?token=${resetToken}`;
-
-            // Send email with reset link
+    
+            const resetToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    
+            const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+            console.log("Reset URL:", resetUrl);  // Debugging
+    
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
                     user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS
-                }
+                    pass: process.env.EMAIL_PASS,
+                },
             });
-
+    
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: email,
                 subject: 'Password Reset Request',
-                html: `
-                    <p>You requested a password reset</p>
-                    <p>Click this <a href="${resetUrl}">link</a> to reset your password</p>
-                `
+                html: `<p>Click this <a href="${resetUrl}">link</a> to reset your password.</p>`,
             };
-
+    
             await transporter.sendMail(mailOptions);
             res.json({ success: true, message: "Password reset link sent to email" });
-            
+    
         } catch (error) {
-            console.error('Error in forgot password:', error);
+            console.error('Forgot Password Error:', error);
             res.status(500).json({ message: "Error processing request", error: error.message });
+        }
+    },
+    resetPassword: async (req, res) => {
+        const { token, newPassword } = req.body;
+
+        try {
+            // Verify the token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await User.findByPk(decoded.userId);
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            // Update the password
+            user.password = await bcrypt.hash(newPassword, 10);
+            await user.save();
+
+            res.json({ success: true, message: "Password reset successfully" });
+        } catch (error) {
+            console.error('Error resetting password:', error);
+            res.status(400).json({ message: "Invalid or expired token" });
+        }
+    },
+    changePassword: async (req, res) => {
+        const { userId, currentPassword, newPassword } = req.body;
+
+        try {
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            // Verify the current password
+            const isMatch = await bcrypt.compare(currentPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: "Current password is incorrect" });
+            }
+
+            // Hash the new password
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            user.password = hashedPassword;
+            await user.save();
+
+            res.json({ success: true, message: "Password updated successfully" });
+        } catch (error) {
+            console.error('Error changing password:', error);
+            res.status(500).json({ message: "Error changing password", error: error.message });
         }
     }
 }
