@@ -18,19 +18,21 @@ interface AuthState {
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
     token: string | null;
+    isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
     user: null, // Initialize user as null
     status: 'idle',
     error: null,
-    token: null
+    token: null,
+    isAuthenticated: false
 };
 
 export const loginUser = createAsyncThunk(
     'auth/login',
-    async ({ username,email, password }: { username: string, email: string, password: string }) => {
-        const response = await  axios.post('http://localhost:8000/api/user/login', { username, email ,password });
+    async ({ email, username, password }: { email: string, username: string, password: string }) => {
+        const response = await axios.post('http://localhost:8000/api/user/login', { email, username, password });
         return response.data;
     }
 );
@@ -53,6 +55,19 @@ const authSlice = createSlice({
             if (action.payload.user) {
                 state.user = action.payload.user;
             }
+        },
+        updateUser: (state, action) => {
+            state.user = action.payload;
+            localStorage.setItem('user', JSON.stringify(action.payload));
+            state.isAuthenticated = true;
+            state.token = localStorage.getItem('token');
+        },
+        deleteUser: (state, action) => {
+            state.user = null;
+            state.token = null;
+            state.isAuthenticated = false;
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
         }
     },
     extraReducers: (builder) => {
@@ -85,9 +100,10 @@ const authSlice = createSlice({
                 state.error = action.error.message || 'Registration failed';
             })
             
+            
     }
 });
 
-export const { setCredentials } = authSlice.actions;
+export const { setCredentials, updateUser } = authSlice.actions;
 
 export default authSlice.reducer;
