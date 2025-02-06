@@ -29,9 +29,9 @@ function App() {
                 </Route>
                 
                 <Route element={<ProtectedRoute allowedRoles={['player']} />}>
-                    <Route path="/game" element={<GameLobby />} />
+                    <Route path="/game" element={<Game />} />
                     <Route path="/chat" element={<Chat />} />
-                    <Route path="/panel" element={<AdminPanel />} />
+                    {/* <Route path="/panel" element={<AdminPanel />} /> */}
                 </Route>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/change-password" element={<ChangePassword />} />
