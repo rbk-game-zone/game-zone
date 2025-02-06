@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const JSZip = require('jszip');
 const { exec } = require('child_process');
-const open = require('open');
 
 module.exports = {
     createGame: async (req, res) => {

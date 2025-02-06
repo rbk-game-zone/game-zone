@@ -51,7 +51,7 @@ const Profile = () => {
       day: 'numeric'
     });
   };
-
+console.log(formatDate,"formatDate");
   const handleChangePassword = async () => {
     try {
       const response = await axios.post(
@@ -78,7 +78,7 @@ const Profile = () => {
     }
   };
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e:any) => {
     e.preventDefault();
     try {
       console.log('Updating profile with data:', profileData);

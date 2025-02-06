@@ -11,7 +11,7 @@ interface User {
     address: string;
     sexe: 'male' | 'female' | 'other';
     role: 'admin' | 'player';
-}
+z}
 
 interface AuthState {
     user: User | null;
