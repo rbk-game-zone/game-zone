@@ -1,6 +1,6 @@
-// AdminPanel.js
 import React, { useState } from 'react';
 import axios from 'axios';
+
 
 const AdminPanel = () => {
     const [gameFile, setGameFile] = useState(null);
@@ -51,41 +51,56 @@ const AdminPanel = () => {
     };
 
     return (
-        <div>
-            <h1>Admin Panel</h1>
-            <input 
-                type="text" 
-                placeholder="Game Title" 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-                required 
-            />
-            <input 
-                type="text" 
-                placeholder="Game Description" 
-                value={description} 
-                onChange={(e) => setDescription(e.target.value)} 
-                required 
-            />
-            <input 
-                type="text" 
-                placeholder="Thumbnail Image URL" 
-                value={thumbnail} 
-                onChange={(e) => setThumbnail(e.target.value)} 
-                required 
-            />
-            <input 
-                type="file" 
-                onChange={handleFileUpload} 
-                accept=".zip"
-                required 
-            />
-            <button onClick={handleSubmit} disabled={loading}>Upload Game</button>
-            {loading && <p>Loading... Please wait.</p>}
-            <div>
-                <button onClick={() => handleGameClick(1)} disabled={loading}>Start Game 1</button>
-                <button onClick={() => handleGameClick(2)} disabled={loading}>Start Game 2</button>
+        <div className="container admin-panel mt-5">
+            <h1 className="text-center mb-4">Admin Panel</h1>
+            <div className="form-group mb-3">
+                <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Game Title" 
+                    value={title} 
+                    onChange={(e) => setTitle(e.target.value)} 
+                    required 
+                />
             </div>
+            <div className="form-group mb-3">
+                <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Game Description" 
+                    value={description} 
+                    onChange={(e) => setDescription(e.target.value)} 
+                    required 
+                />
+            </div>
+            <div className="form-group mb-3">
+                <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Thumbnail Image URL" 
+                    value={thumbnail} 
+                    onChange={(e) => setThumbnail(e.target.value)} 
+                    required 
+                />
+            </div>
+            <div className="form-group mb-3">
+                <input 
+                    type="file" 
+                    className="form-control-file" 
+                    onChange={handleFileUpload} 
+                    accept=".zip"
+                    required 
+                />
+            </div>
+            <button 
+                className="btn btn-primary w-100 mb-3" 
+                onClick={handleSubmit} 
+                disabled={loading}>
+                {loading ? 'Uploading...' : 'Upload Game'}
+            </button>
+            {loading && <p className="text-center">Loading... Please wait.</p>}
+            
+    
         </div>
     );
 };

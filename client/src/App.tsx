@@ -11,15 +11,17 @@ import ResetPassword from './components/ResetPassword';
 import './App.css'
 import Chat from "./components/Chat";
 import AdminPanel from "../../games/AdminPanel";
-import GameLobby from "../../games/GameLobby.jsx";
+import Navbar from './components/Navbar.js';
+import Home from './components/home.js';
 
 function App() {
     return (
         <Router>
+        <Navbar/>
             <Routes>
+            <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route path="/admin" element={<Admin />} />
@@ -36,6 +38,7 @@ function App() {
                 <Route path="/reset-password" element={<ResetPassword />} />
             </Routes>
         </Router>
+        
     );
 }
 
