@@ -1,7 +1,10 @@
 const { Sequelize, DataTypes } = require("sequelize");
+// Import dotenv to load environment variables
+require('dotenv').config();
+
 // Create Sequelize connection
 const sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASSWORD, {
-  host: "localhost",
+  host: process.env.HOST,
   dialect: "mysql",
 });
 
@@ -34,12 +37,12 @@ db.Message.belongsTo(db.Room, { foreignKey: 'room_id' });
 db.User.belongsToMany(db.Room, { through: db.UserRoom, foreignKey: 'user_id' });
 db.Room.belongsToMany(db.User, { through: db.UserRoom, foreignKey: 'room_id' });
 
-db.sequelize.sync({ force: false , alter: false } )
-  .then(() => {
-    console.log('Database synchronized');
-  })
-  .catch((err) => {
-    console.error('Error synchronizing database:', err);
-  });
+// db.sequelize.sync({ force: true  } )
+//   .then(() => {
+//     console.log('Database synchronized');
+//   })
+//   .catch((err) => {
+//     console.error('Error synchronizing database:', err);
+//   });
 
 module.exports = db;

@@ -1,9 +1,11 @@
 export default class GameScene extends Phaser.Scene {
-  private bottomShapes!: Phaser.Physics.Arcade.Group; // Use Group instead of StaticGroup
+  private bottomShapes!: Phaser.Physics.Arcade.Group;
   private fallingShapes!: Phaser.Physics.Arcade.Group;
   private cursor!: Phaser.GameObjects.Image;
   private score: number = 0;
   private scoreText!: Phaser.GameObjects.Text;
+  private bottomCollider!: Phaser.Physics.Arcade.Sprite; // Bottom collider object
+  private backgroundMusic!: Phaser.Sound.BaseSound; // Background music property
 
   constructor() {
     super({ key: 'GameScene' });
@@ -11,17 +13,23 @@ export default class GameScene extends Phaser.Scene {
 
   preload() {
     // Load all assets
+    this.load.audio('gameMusic', '/assets/music/game-over.mp3');
     this.load.image('triangle', '/assets/triangle.png');
     this.load.image('square', '/assets/square.png');
     this.load.image('circle', '/assets/circle.png');
     this.load.image('triangle01', '/assets/triangle01.png');
     this.load.image('square01', '/assets/square01.png');
     this.load.image('circle01', '/assets/circle01.png');
+    this.load.image('bottom01', '/assets/bottom01.png'); // Load the bottom image
     this.load.image('cursor', '/assets/cursor.png');
   }
 
   create() {
-    // Use a regular Group for bottom shapes so they can move
+    // Initialize and play the background music
+    this.backgroundMusic = this.sound.add('gameMusic', { loop: true });
+    this.backgroundMusic.play();
+
+    // Use a regular Group for bottom shapes so they can 
     this.bottomShapes = this.physics.add.group();
     this.fallingShapes = this.physics.add.group();
 
@@ -30,13 +38,21 @@ export default class GameScene extends Phaser.Scene {
     this.createBottomShape(400, 550, 'square01', 'square01');
     this.createBottomShape(600, 550, 'circle01', 'circle01');
 
+    // Create the bottom collider (bottom01.png)
+    this.bottomCollider = this.physics.add.sprite(700, 700, 'bottom01').setOrigin(0.5, 0.5);
+    this.bottomCollider.setImmovable(true); // Make it immovable
+    this.bottomCollider.setVisible(true); // Make it visible
+    this.bottomCollider.displayWidth = 1400; // Set the width of the image
+    this.bottomCollider.displayHeight = 50; // Set the height of the image (adjust as needed)
+    this.bottomCollider.refreshBody(); // Refresh the physics body to match the new size
+
     // Cursor setup
     this.cursor = this.add.image(0, 0, 'cursor').setScale(0.1);
     this.input.setDefaultCursor('none');
 
     // Spawn one shape every second
     this.time.addEvent({
-      delay: 1000,
+      delay: 3000,
       callback: this.spawnShape,
       callbackScope: this,
       loop: true,
@@ -45,11 +61,11 @@ export default class GameScene extends Phaser.Scene {
     // Add collider between falling shapes and bottom shapes
     this.physics.add.collider(this.fallingShapes, this.bottomShapes, this.handleCollision, null, this);
 
+    // Add collider between falling shapes and the bottom collider (bottom01.png)
+    this.physics.add.collider(this.fallingShapes, this.bottomCollider, this.handleBottomCollision, null, this);
+
     // Score text
     this.scoreText = this.add.text(10, 10, 'Score: 0', { fontSize: '24px', fill: '#fff' });
-
-    // Debug: Enable physics debug to visualize colliders
-    
   }
 
   update() {
@@ -78,7 +94,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   spawnShape() {
-    const shapes = ['triangle', 'square', 'circle'];
+    const shapes = ['triangle01', 'square01', 'circle01']; // Use the falling shapes
     const randomShape = Phaser.Utils.Array.GetRandom(shapes);
     const x = Phaser.Math.Between(100, 1200);
     const y = 0;
@@ -105,9 +121,9 @@ export default class GameScene extends Phaser.Scene {
 
     // Check if the falling shape matches the bottom shape
     if (
-      (fallingKey === 'triangle' && bottomName === 'triangle01') ||
-      (fallingKey === 'square' && bottomName === 'square01') ||
-      (fallingKey === 'circle' && bottomName === 'circle01')
+      (fallingKey === 'triangle01' && bottomName === 'triangle01') ||
+      (fallingKey === 'square01' && bottomName === 'square01') ||
+      (fallingKey === 'circle01' && bottomName === 'circle01')
     ) {
       // Correct match: Grow the bottom shape
       bottomShape.setScale(bottomShape.scaleX + 0.05);
@@ -118,5 +134,17 @@ export default class GameScene extends Phaser.Scene {
       // Incorrect match: End the game
       this.scene.start('GameOverScene');
     }
+  }
+
+  handleBottomCollision(fallingShape: Phaser.GameObjects.GameObject) {
+    // Destroy the falling shape
+    fallingShape.destroy();
+    this.backgroundMusic.pause();
+
+    // Store the score in the Data Manager before transitioning to the GameOverScene
+    this.registry.set('finalScore', this.score); // Save the score
+
+    // End the game immediately when a falling shape collides with bottom01.png
+    this.scene.start('GameOverScene');
   }
 }
