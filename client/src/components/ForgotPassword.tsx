@@ -7,7 +7,7 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
-  const handleForgotPassword = async (e) => {
+  const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await axios.post(
@@ -24,7 +24,7 @@ const ForgotPassword = () => {
         });
         navigate('/login');
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error sending password reset email:', error);
       Swal.fire({
         title: 'Error!',
@@ -36,22 +36,27 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div>
-      <h1>Forgot Password</h1>
-      <form onSubmit={handleForgotPassword}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Send Reset Link</button>
-      </form>
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <div className="card p-4 shadow-lg forgot-password-card">
+        <h2 className="text-center mb-3">Forgot Password</h2>
+        <form onSubmit={handleForgotPassword}>
+          <div className="mb-3">
+            <label className="form-label">Email:</label>
+            <input
+              type="email"
+              className="form-control"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">
+            Send Reset Link
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default ForgotPassword; 
+export default ForgotPassword;

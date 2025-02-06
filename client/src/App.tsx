@@ -10,16 +10,18 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import './App.css'
 import Chat from "./components/Chat";
-// import AdminPanel from "../../games/ad";
-// import GameLobby from "../../games/GameLobby.jsx";
+import AdminPanel from "../../games/AdminPanel";
+import Navbar from './components/Navbar.js';
+import Home from './components/home.js';
 
 function App() {
     return (
         <Router>
+        <Navbar/>
             <Routes>
+            <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route path="/admin" element={<Admin />} />
@@ -28,7 +30,7 @@ function App() {
                 <Route element={<ProtectedRoute allowedRoles={['player']} />}>
                     <Route path="/game" element={<Game />} />
                     <Route path="/chat" element={<Chat />} />
-                    {/* <Route path="/panel" element={<AdminPanel />} /> */}
+                    <Route path="/panel" element={<AdminPanel />} />
                 </Route>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/change-password" element={<ChangePassword />} />
@@ -36,6 +38,7 @@ function App() {
                 <Route path="/reset-password" element={<ResetPassword />} />
             </Routes>
         </Router>
+        
     );
 }
 
