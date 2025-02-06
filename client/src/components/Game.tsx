@@ -18,35 +18,6 @@ const Game: React.FC = () => {
     const [games, setGames] = useState<GameData[]>([]);
 console.log("games",games);
 
-    // useEffect(() => {
-    //     const fetchGame = async () => {
-    //         try {
-    //             // Fetch the game data
-    //             const response = await axios.get(`http://localhost:8000/api/${id}`);
-    //             const gameData = response.data;
-
-    //             if (!gameData || !gameData.game_file) {
-    //                 throw new Error('Game file path is missing');
-    //             }
-
-    //             // Construct the full URL for the game file
-    //             const gameFileUrl = `http://localhost:8000/${gameData.game_file}`; // Adjust this if necessary
-    //             console.log('Game URL:', gameFileUrl); // Debug log
-
-    //             // Set the game URL directly since it's already a file path
-    //             setGameUrl(gameFileUrl);
-    //             setLoading(false);
-    //         } catch (err) {
-    //             console.error('Error fetching game:', err);
-    //             setError('Failed to load the game. Please try again later.');
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     if (id) {
-    //         fetchGame();
-    //     }
-    // }, [id]);
 
     useEffect(() => {
         const fetchGames = async () => {

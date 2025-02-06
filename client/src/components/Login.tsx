@@ -15,14 +15,13 @@ const Login: React.FC = () => {
         e.preventDefault();
         try {
             await dispatch(loginUser({ email, username, password })).unwrap();
-            // Check user role and navigate accordingly
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             console.log(user.role);
-            
+
             if (user.role === 'admin') {
                 navigate('/admin');
             } else {
-                navigate('/dashboard');
+                navigate('/');
             }
         } catch (error) {
             alert('Login failed. Please check your credentials.');
@@ -30,40 +29,60 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="login-container">
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Email or Username:</label>
-                    <input
-                        type="text"
-                        value={email || username}
-                        onChange={(e) => {
-                            if (e.target.value.includes('@')) {
-                                setEmail(e.target.value);
-                                setUsername('');
-                            } else {
-                                setUsername(e.target.value);
-                                setEmail('');
-                            }
-                        }}
-                        required
-                    />
+        <div className="login-container container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6 col-lg-4">
+                    <div className="card login-card shadow">
+                        <div className="card-body">
+                            <h2 className="card-title text-center mb-4">Login</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="emailOrUsername" className="form-label">
+                                        Email or Username:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="emailOrUsername"
+                                        value={email || username}
+                                        onChange={(e) => {
+                                            if (e.target.value.includes('@')) {
+                                                setEmail(e.target.value);
+                                                setUsername('');
+                                            } else {
+                                                setUsername(e.target.value);
+                                                setEmail('');
+                                            }
+                                        }}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="password" className="form-label">
+                                        Password:
+                                    </label>
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        id="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-primary w-100">
+                                    Login
+                                </button>
+                            </form>
+                            <p className="text-center mt-3">
+                                <Link to="/forgot-password" className="text-decoration-none">
+                                    Forgot Password?
+                                </Link>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Login</button>
-            </form>
-            <p>
-                <Link to="/forgot-password">Forgot Password?</Link>
-            </p>
+            </div>
         </div>
     );
 };
