@@ -36,6 +36,14 @@
   }
   
      
+  .nav-link a {
+    text-decoration: none; /* Removes underline */
+    color: white; /* Makes text color white */
+  }
+  
+  .nav-link a:hover {
+    color: lightgray; /* Optional: Changes color on hover */
+  }
 /* app.css */
 
 /* Signup Page Styling */
@@ -52,10 +60,18 @@
     width: 100%;
     max-width: 800px;
     margin-top: 10px;
-    background-color: rgba(169, 169, 169, 0.5); /* Gray background with transparency */
+    background-color: rgba(128, 128, 128, 0.5); /* Gray with 50% transparency */
     backdrop-filter: blur(5px); /* Optional: Apply blur effect to the background */
 }
 
+.login-card{
+    border-radius: 10px;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 10px;
+    background-color: rgba(128, 128, 128, 0.5); /* Gray with 50% transparency */
+    backdrop-filter: blur(5px); /* Optional: Apply blur effect to the background */
+}
 .card-body {
     padding: 2rem;
 }
@@ -73,23 +89,26 @@
 input.form-control, select.form-select {
     border-radius: 5px;
     padding: 10px;
-}
+    background-color:rgba(128, 128, 128, 0.5);
+ }
 
 button.btn {
     font-size: 1.1rem;
     padding: 10px;
     border-radius: 5px;
+    color: rgb(27, 29, 30);
+    
 }
 
 button.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: rgba(204, 243, 99, 0.7);
+    border-color: gray;
     transition: background-color 0.3s ease;
 }
 
 button.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+    background-color:gray;
+    border-color: gray;
 }
 
 /* Horizontal form layout on large screens */
@@ -109,7 +128,7 @@ button.btn-primary:hover {
 }
 
 .text-center {
-    color: #666;
+    color:rgb(27, 29, 30);
 }
 
 /* Mobile responsiveness: Stack columns on smaller devices */
@@ -136,3 +155,15 @@ button.btn-primary:hover {
   align-items: center;
   background-color: #000;
 }
+
+.forgot-password-card {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 10px;
+    background-color:rgba(128, 128, 128, 0.5);
+    backdrop-filter: blur(5px); 
+  }
+  .card {
+    background-color:rgba(128, 128, 128, 0.5);
+    backdrop-filter: blur(5px);
+  }
