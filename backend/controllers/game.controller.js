@@ -109,36 +109,17 @@ module.exports = {
                 console.log(`npm install output: ${stdout}`);
                 console.error(`npm install error output: ${stderr}`);
 
-                // Now run npm run dev and wait for the server to start
-                const viteProcess = exec(`cd "${gameDir}" && npm run dev`);
-
-                let responseSent = false; // Flag to track if response has been sent
-
-                viteProcess.stdout.on('data', (data) => {
-                    console.log(`Vite output: ${data}`);
-                    const localServerUrl = "http://localhost:3000/"
-                    if (localServerUrl && !responseSent) {
-                        // If the local server URL is found and response hasn't been sent
-                        res.status(200).json({ message: "Game started successfully", url: localServerUrl });
-                        responseSent = true; // Mark response as sent
-
-                        // Open the URL in a new window after a delay
-                        setTimeout(() => {
-                            exec(`start http://localhost:3000/`); // Use exec to open the URL
-                        }, 2000); // Delay of 2 seconds
+                // Now run npm run dev
+                exec(`cd "${gameDir}" && npm run dev`, (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(`Error executing npm run dev: ${error.message}`);
+                        return res.status(500).json({ message: "Error starting the game", error: error.message });
                     }
-                });
-
-                viteProcess.stderr.on('data', (data) => {
-                    console.error(`Vite error output: ${data}`);
-                });
-
-                viteProcess.on('exit', (code) => {
-                    console.log(`Vite process exited with code ${code}`);
-                    if (!responseSent) {
-                        // If the process exits and response hasn't been sent, send an error response
-                        res.status(500).json({ message: "Vite process exited unexpectedly" });
-                    }
+                    console.log(`npm run dev output: ${stdout}`);
+                    console.error(`npm run dev error output: ${stderr}`);
+                    
+                    // Optionally, you can send a response indicating that the command was executed
+                    res.status(200).json({ message: "Game started successfully" });
                 });
             });
         } catch (error) {
