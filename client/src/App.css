@@ -4,6 +4,8 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 10px;
+    background-color:rgba(128, 128, 128, 0.5);
+    backdrop-filter: blur(5px);
   }
   
   .chat-box {
@@ -48,6 +50,7 @@
 
 /* Signup Page Styling */
 .signup-container {
+    color  :white ;
     padding: 0 15px;
     display: flex;
     justify-content: center;
@@ -56,6 +59,7 @@
 }
 
 .signup-card {
+    color  :white ;
     border-radius: 10px;
     width: 100%;
     max-width: 800px;
@@ -65,6 +69,7 @@
 }
 
 .login-card{
+    color  :white ;
     border-radius: 10px;
     width: 100%;
     max-width: 800px;
@@ -79,6 +84,7 @@
 .card-title {
     font-size: 1.8rem;
     font-weight: bold;
+    
 }
 
 .form-label {
@@ -87,6 +93,7 @@
 }
 
 input.form-control, select.form-select {
+    
     border-radius: 5px;
     padding: 10px;
     background-color:rgba(128, 128, 128, 0.5);
@@ -104,6 +111,7 @@ button.btn-primary {
     background-color: rgba(204, 243, 99, 0.7);
     border-color: gray;
     transition: background-color 0.3s ease;
+    color  :white ;
 }
 
 button.btn-primary:hover {
@@ -128,7 +136,7 @@ button.btn-primary:hover {
 }
 
 .text-center {
-    color:rgb(27, 29, 30);
+    color:rgb(255, 255, 255);
 }
 
 /* Mobile responsiveness: Stack columns on smaller devices */
@@ -157,6 +165,7 @@ button.btn-primary:hover {
 }
 
 .forgot-password-card {
+    color  :white ;
     max-width: 400px;
     width: 100%;
     border-radius: 10px;
@@ -167,3 +176,35 @@ button.btn-primary:hover {
     background-color:rgba(128, 128, 128, 0.5);
     backdrop-filter: blur(5px);
   }
+  /* ******** */
+  /* Additional styles for AdminPanel */
+.admin-panel {
+    color  :white ;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color:rgba(128, 128, 128, 0.5);
+    backdrop-filter: blur(5px); 
+}
+
+h1 {
+    font-size: 2rem;
+    color: #333;
+}
+
+.form-group input {
+    border-radius: 5px;
+    
+}
+
+button:disabled {
+    opacity: 0.5;
+}
+
+button {
+    font-size: 1.1rem;
+}
+
+.text-center {
+    text-align: center;
+}

@@ -11,7 +11,8 @@ import ResetPassword from './components/ResetPassword';
 import './App.css'
 import Chat from "./components/Chat";
 import AdminPanel from "../../games/AdminPanel";
-import GameLobby from "../../games/GameLobby.jsx";
+import Navbar from './components/Navbar.js';
+import Home from './components/home.js';
 
 function App() {
     return (
