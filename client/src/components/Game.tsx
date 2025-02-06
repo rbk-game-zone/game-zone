@@ -15,36 +15,65 @@ const Game: React.FC = () => {
     const [gameUrl, setGameUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [games, setGames] = useState<GameData[]>([]);
+console.log("games",games);
+
+    // useEffect(() => {
+    //     const fetchGame = async () => {
+    //         try {
+    //             // Fetch the game data
+    //             const response = await axios.get(`http://localhost:8000/api/${id}`);
+    //             const gameData = response.data;
+
+    //             if (!gameData || !gameData.game_file) {
+    //                 throw new Error('Game file path is missing');
+    //             }
+
+    //             // Construct the full URL for the game file
+    //             const gameFileUrl = `http://localhost:8000/${gameData.game_file}`; // Adjust this if necessary
+    //             console.log('Game URL:', gameFileUrl); // Debug log
+
+    //             // Set the game URL directly since it's already a file path
+    //             setGameUrl(gameFileUrl);
+    //             setLoading(false);
+    //         } catch (err) {
+    //             console.error('Error fetching game:', err);
+    //             setError('Failed to load the game. Please try again later.');
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     if (id) {
+    //         fetchGame();
+    //     }
+    // }, [id]);
 
     useEffect(() => {
-        const fetchGame = async () => {
+        const fetchGames = async () => {
             try {
-                // Fetch the game data
-                const response = await axios.get(`/api/games/${id}`);
-                const gameData = response.data;
-
-                if (!gameData || !gameData.game_file) {
-                    throw new Error('Game file path is missing');
-                }
-
-                // Construct the full URL for the game file
-                const gameFileUrl = `http://localhost:8000/${gameData.game_file}`;
-                console.log('Game URL:', gameFileUrl); // Debug log
-
-                // Set the game URL directly since it's already a file path
-                setGameUrl(gameFileUrl);
+                const response = await axios.get('http://localhost:8000/api/'); // Fetch all games
+                setGames(response.data);
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching game:', err);
-                setError('Failed to load the game. Please try again later.');
+                console.error('Error fetching games:', err);
+                setError('Failed to load games. Please try again later.');
                 setLoading(false);
             }
         };
 
-        if (id) {
-            fetchGame();
+        fetchGames();
+    }, []);
+
+    const handleGameClick = async (gameId: number) => {
+        try {
+            // Trigger the backend to unzip and run the game
+            const response = await axios.post(`http://localhost:8000/api/unzip/${gameId}`);
+            console.log('Game started:', response.data);
+        } catch (err) {
+            console.error('Error starting game:', err);
+            alert('Failed to start the game. Please try again later.');
         }
-    }, [id]);
+    };
 
     if (loading) {
         return <div>Loading...</div>;
@@ -53,17 +82,30 @@ const Game: React.FC = () => {
     if (error) {
         return <div>{error}</div>;
     }
+// console.log("games",games);
 
     return (
         <div id="game-container" style={{ width: '100%', height: '100vh' }}>
-            {gameUrl && (
+            {games && (
                 <iframe
-                    src={gameUrl}
                     style={{ width: '100%', height: '100%', border: 'none' }}
                     title="Game"
                     sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                 />
             )}
+            <div className="game-container">
+                {Array.isArray(games) && games.length > 0 ? (
+                    games.map((game) => (
+                        <div key={game.id} className="game-card" onClick={() => handleGameClick(game.id)}>
+                            <img src={game.thumbnail} alt={game.title} style={{width: '300px'}} />
+                            <h3>{game.title}</h3>
+                            <p>{game.description}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p>No games available.</p>
+                )}
+            </div>
         </div>
     );
 };
