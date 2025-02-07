@@ -84,7 +84,7 @@ const Chat: React.FC = () => {
           </div>
         ))}
       </div>
-
+        
       <div className="input-group">
         <input
           type="text"
