@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
+import React from 'react';
 
-
-function Navbar() {
+function Navbar({ onChatToggle, isChatVisible }) {
   
   return (
     <div>
@@ -44,6 +44,7 @@ function Navbar() {
         <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
         <button className="btn btn-primary" type="submit">Search</button>
       </form>
+      
     </div>
   </div>
 </nav>
