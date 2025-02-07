@@ -24,7 +24,13 @@
     margin-right: 5px;
     padding: 5px;
   }
-  
+  .chat-icon {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
   button {
     padding: 5px 10px;
   }
