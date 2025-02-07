@@ -37,11 +37,7 @@ db.Message.belongsTo(db.Room, { foreignKey: 'room_id' });
 db.User.belongsToMany(db.Room, { through: db.UserRoom, foreignKey: 'user_id' });
 db.Room.belongsToMany(db.User, { through: db.UserRoom, foreignKey: 'room_id' });
 
-<<<<<<< HEAD
 // db.sequelize.sync({ force: false , alter: false } )
-=======
-// db.sequelize.sync({ force: true  } )
->>>>>>> 8b5cf8ea10c6c53797a4612ac635287fd7e155a5
 //   .then(() => {
 //     console.log('Database synchronized');
 //   })

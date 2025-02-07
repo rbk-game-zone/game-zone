@@ -19,6 +19,7 @@ const Game: React.FC = () => {
 console.log("games",games);
 
 
+
     useEffect(() => {
         const fetchGames = async () => {
             try {

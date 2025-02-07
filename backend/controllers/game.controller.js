@@ -4,6 +4,7 @@ const fs = require('fs');
 const JSZip = require('jszip');
 const { exec } = require('child_process');
 const open = require('open');
+const { Score } = require('../model/index');
 
 module.exports = {
     createGame: async (req, res) => {
@@ -126,6 +127,34 @@ module.exports = {
         } catch (error) {
             console.error('Error unzipping and running game:', error);
             res.status(500).json({ message: "Error unzipping and running game", error: error.message });
+        }
+    },
+    submitScore: async (req, res) => {
+        const { user_id, game_id, score } = req.body;
+
+        try {
+            // Check if a score already exists for this user and game
+            const existingScore = await Score.findOne({
+                where: { user_id, game_id }
+            });
+
+            if (existingScore) {
+                // Compare and update if the new score is higher
+                if (score > existingScore.score) {
+                    existingScore.score = score; // Update to the new score
+                    await existingScore.save(); // Save the updated score
+                    return res.status(200).json({ message: 'Score updated successfully', score: existingScore });
+                } else {
+                    return res.status(200).json({ message: 'Score not high enough to update', score: existingScore });
+                }
+            } else {
+                // Create a new score entry
+                const newScore = await Score.create({ user_id, game_id, score });
+                return res.status(201).json({ message: 'Score submitted successfully', score: newScore });
+            }
+        } catch (error) {
+            console.error('Error submitting score:', error);
+            res.status(500).json({ message: 'Error submitting score', error: error.message });
         }
     }
 };
