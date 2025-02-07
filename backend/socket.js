@@ -10,6 +10,16 @@ module.exports = (io) => {
       console.log(`User ${user_id} joined room ${room_id}`);
     });
 
+    // Create room
+    socket.on("createRoom", async ({ name, created_by }) => {
+      try {
+        const room = await db.Room.create({ name, created_by });
+        io.emit("roomCreated", room); // Notify all clients about the new room
+      } catch (error) {
+        console.error("Error creating room:", error);
+      }
+    });
+
     // Sending a message
     socket.on("sendMessage", async ({ user_id, room_id, content }) => {
       try {
