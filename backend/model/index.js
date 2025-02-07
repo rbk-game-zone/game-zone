@@ -18,6 +18,7 @@ db.Score = require("./score.model.js")(sequelize);
 db.Message = require("./message.model.js")(sequelize);
 db.Room = require("./room.model.js")(sequelize);
 db.UserRoom = require("./user_room.model.js")(sequelize);
+db.Category = require("./category.model.js")(sequelize);
 
 // Set up relationships
 db.User.hasMany(db.Score, { foreignKey: 'user_id' });
@@ -37,12 +38,15 @@ db.Message.belongsTo(db.Room, { foreignKey: 'room_id' });
 db.User.belongsToMany(db.Room, { through: db.UserRoom, foreignKey: 'user_id' });
 db.Room.belongsToMany(db.User, { through: db.UserRoom, foreignKey: 'room_id' });
 
-// db.sequelize.sync({ force: true  } )
-//   .then(() => {
-//     console.log('Database synchronized');
-//   })
-//   .catch((err) => {
-//     console.error('Error synchronizing database:', err);
-//   });
+db.Game.belongsTo(db.Category, { foreignKey: 'category_id' });
+db.Category.hasMany(db.Game, { foreignKey: 'category_id' });
+
+db.sequelize.sync({ force: false  } )
+  .then(() => {
+    console.log('Database synchronized');
+  })
+  .catch((err) => {
+    console.error('Error synchronizing database:', err);
+  });
 
 module.exports = db;

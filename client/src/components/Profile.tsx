@@ -4,17 +4,14 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { updateUser } from '../store/authSlice';
-import ChangePassword from './ChangePassword';
-
+import './profile.css';
+import { RootState } from '../store/store';
 const Profile = () => {
-  console.log("Retrieving user data:", localStorage.getItem('user'));
-  const user = JSON.parse(localStorage.getItem('user') || 'null') || useSelector((state) => state.auth.user);
-  console.log("Parsed user data:", user);
-  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+  const user = storedUser || useSelector((state: RootState ) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
-  const [users, setUser] = useState(user);
   const [profileData, setProfileData] = useState({
     username: user?.username || '',
     email: user?.email || '',
@@ -23,65 +20,60 @@ const Profile = () => {
     address: user?.address || '',
     firstname: user?.first_name || '',
     lastname: user?.last_name || '',
-    age: user?.age || ''
+    age: user?.age || '',
+    avatar: user?.avatar || ''  // Add avatar field
   });
-
-  // Debug logging
-  console.log('User data in Profile:', user);
-  console.log('CreatedAt value:', user?.createdAt);
-
-  // Use useEffect to handle navigation
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     navigate('/login');
-  //   }
-  // }, [isAuthenticated, navigate]);
-
-  // if (!isAuthenticated) {
-  //   return null; // Return null if not authenticated
-  // }
-
-  // Format the date
-  const formatDate = (dateString:string) => {
-    console.log('Formatting date string:', dateString);
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-console.log(formatDate,"formatDate");
-  const handleChangePassword = async () => {
-    try {
-      const response = await axios.post(
-        `http://localhost:8000/api/user/forgot-password`,
-        { email: user.email }
-      );
-
-      if (response.data.success) {
-        Swal.fire({
-          title: 'Success!',
-          text: 'Password reset link has been sent to your email.',
-          icon: 'success',
-          confirmButtonText: 'OK',
-        });
-      }
-    } catch (error :any) {
-      console.error('Error sending password reset email:', error);
-      Swal.fire({
-        title: 'Error!',
-        text: error.response?.data?.message || 'Failed to send password reset email.',
-        icon: 'error',
-        confirmButtonText: 'OK',
-      });
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const storedAvatar = localStorage.getItem('avatar'); // Fetch stored avatar
+  
+    if (storedUser) {
+      setProfileData((prevData) => ({
+        ...prevData,
+        username: storedUser.username || '',
+        email: storedUser.email || '',
+        sexe: storedUser.sexe || '',
+        role: storedUser.role || '',
+        address: storedUser.address || '',
+        firstname: storedUser.first_name || '',
+        lastname: storedUser.last_name || '',
+        age: storedUser.age || '',
+      }));
+  
+      setAvatarPreview(storedAvatar || ''); // Ensure preview stays correct
     }
-  };
+  }, []);  // ✅ Empty dependency array prevents infinite loop
+  
+  
+  
+  
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '');  // Avatar preview state
 
-  const handleUpdate = async (e:any) => {
+  // Array of available avatar icons (can be URLs or local paths to images)
+  const availableAvatars = [
+    'https://th.bing.com/th/id/OIP.BZDN5jtCETHvCmYtgEV8eAHaHa?w=184&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7', // Replace with actual URLs or paths to icons
+    'avatar2.png',
+    'avatar3.png',
+    'avatar4.png',
+    'avatar5.png',
+    'avatar6.png',
+  ];
+
+  // Handle avatar selection
+  const handleAvatarSelect = (avatar: string) => {
+    setAvatarPreview(avatar); // Update preview
+    localStorage.setItem('avatar', avatar); // ✅ Store avatar separately in localStorage
+  };
+  
+  
+  
+  
+  
+
+  // Handle profile update
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log('Updating profile with data:', profileData);
       const response = await axios.put(
         `http://localhost:8000/api/user/users/${user.id}`,
         profileData,
@@ -91,7 +83,6 @@ console.log(formatDate,"formatDate");
       );
 
       const updatedUser = response.data.user;
-      setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
       dispatch(updateUser(updatedUser));
 
@@ -101,7 +92,7 @@ console.log(formatDate,"formatDate");
         text: 'Your profile has been successfully updated.',
       });
       setEditMode(false);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error updating profile:', error);
       Swal.fire({
         icon: 'error',
@@ -114,20 +105,47 @@ console.log(formatDate,"formatDate");
   return (
     <div>
       <div className="profile-container">
-        <h1 className="profile-title">Profile Dashboard</h1>  
+        <h1 className="profile-title">Profile Dashboard</h1>
         <div className="profile-content">
           <div className="profile-card">
             <div className="profile-header">
-              <h2 className="profile-name">{user?.firstname} {user?.lastname}</h2>
+              {/* Display Avatar */}
+              <div className="avatar-container">
+                <img
+                  src={avatarPreview || 'default-avatar.png'}  // Show preview or default image
+                  alt="Avatar"
+                  className="avatar-img"
+                />
+              </div>
+              <div className="profile-name">{user?.firstname} {user?.lastname}</div>
               <p className="profile-role">{user?.role}</p>
               <p className="profile-email">{user?.email}</p>
               <p className="profile-sexe">{user?.sexe}</p>
               <p className="profile-address">{user?.address}</p>
             </div>
-            
+
             <div className="profile-details">
               {editMode ? (
                 <>
+                  {/* Avatar selection grid */}
+                  <div className="profile-field">
+                    <label>Choose Avatar:</label>
+                    <div className="avatar-selection">
+                      {availableAvatars.map((avatar, index) => (
+                        <div
+                          key={index}
+                          className="avatar-option"
+                          onClick={() => handleAvatarSelect(avatar)}
+                        >
+                          <img
+                            src={avatarPreview || localStorage.getItem('avatar') || 'default-avatar.png'}  // Use stored avatar
+                            alt="Avatar"
+                            className="avatar-img"
+                                                      />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                   <div className="profile-field">
                     <label>First Name:</label>
                     <input
@@ -145,14 +163,6 @@ console.log(formatDate,"formatDate");
                     />
                   </div>
                   <div className="profile-field">
-                    <label>Username:</label>
-                    <input
-                      type="text"
-                      value={profileData.username}
-                      onChange={(e) => setProfileData({...profileData, username: e.target.value})}
-                    />
-                  </div>
-                  <div className="profile-field">
                     <label>Email:</label>
                     <input
                       type="email"
@@ -160,7 +170,6 @@ console.log(formatDate,"formatDate");
                       onChange={(e) => setProfileData({...profileData, email: e.target.value})}
                     />
                   </div>
-                  {/* Role update input removed from user's own profile */}
                 </>
               ) : (
                 <>

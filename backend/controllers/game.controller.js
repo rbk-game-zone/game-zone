@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const JSZip = require('jszip');
 const { exec } = require('child_process');
+const { Category } = require('../model/index');
 
 module.exports = {
     createGame: async (req, res) => {
@@ -48,13 +49,17 @@ module.exports = {
                     fs.writeFileSync(filePath, await file.async('nodebuffer'));
                 }
             }
-
+            const category = await Category.findOne({ where: { name: req.body.category } });
+            if (!category) {
+                return res.status(404).json({ message: "Category not found" });
+            }
             // Save game data in the database
             const game = await Game.create({
                 title: req.body.title,
                 description: req.body.description,
                 game_file: gameDir, // Store the directory path
-                thumbnail: req.body.thumbnail // Store the image URL directly from the request body
+                thumbnail: req.body.thumbnail, // Store the image URL directly from the request body
+                category_id: category.id
             });
 
             res.status(201).json(game);
@@ -126,6 +131,24 @@ module.exports = {
             console.error('Error unzipping and running game:', error);
             res.status(500).json({ message: "Error unzipping and running game", error: error.message });
         }
+    },
+    getGamesByCategory: async (req, res) => {
+        const { category } = req.params;
+        try {
+            const games = await Game.findAll({ where: { category } });
+            res.status(200).json(games);
+        } catch (error) {
+            console.error('Error fetching games by category:', error);
+            res.status(500).json({ message: "Error fetching games by category", error: error.message });
+        }
+    },
+    getCategories: async (req, res) => {
+        const categories = await Category.findAll();
+        res.status(200).json(categories);
+    },
+    addCategory: async (req, res) => {
+        const category = await Category.create({ name: req.body.name });
+        res.status(201).json(category);
     }
 };
 
