@@ -10,7 +10,7 @@ const { generateResetToken } = require('../utils/authUtils');
 module.exports = {
     Login: async (req, res) => {
         try {
-            const { email, username, password } = req.body;
+            const { email, username, password ,role,first_name,last_name,age,address,sexe} = req.body;
 
             // Check if either email or username is provided
             if ((!email && !username) || !password) {
@@ -53,8 +53,14 @@ module.exports = {
                     email: user.email,
                     fullName: `${user.first_name} ${user.last_name}`,
                     role: user.role,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    age: user.age,
+                    address: user.address,
+                    sexe: user.sexe
                 }
             });
+
 
         } catch (error) {
             console.error(error);

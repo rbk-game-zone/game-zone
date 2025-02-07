@@ -135,7 +135,7 @@ module.exports = {
     getGamesByCategory: async (req, res) => {
         const { category } = req.params;
         try {
-            const games = await Game.findAll({ where: { category } });
+            const games = await Game.findAll({ where: { category_id: category } });
             res.status(200).json(games);
         } catch (error) {
             console.error('Error fetching games by category:', error);

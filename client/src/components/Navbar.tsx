@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Category } from "../types/tables/category";
 import axios from "axios";
 
-function Navbar() {
+function Navbar({fetchGameByCategory}:{fetchGameByCategory:any}) {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
@@ -26,10 +26,10 @@ function Navbar() {
         console.error("Error fetching categories:", error);
       }
     };
-
-    fetchCategories();
+  fetchCategories();
   }, []);
 
+  
   return (
     <div>
       <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
@@ -43,7 +43,7 @@ function Navbar() {
               <li className="nav-item">
                 <Link className="nav-link" to="/">Home</Link>
               </li>
-              <li className="nav-item">²²²²
+              <li className="nav-item">
                 <Link className="nav-link" to="/login">Login</Link>
               </li>
               <li className="nav-item">
@@ -57,10 +57,11 @@ function Navbar() {
                   {/* Dynamically render category items */}
                   {categories.map((category: Category) => (
                     <li key={category.id}>
-                      <Link className="dropdown-item" to={`/category/${category.id}`}>{category.name}</Link>
+                      <Link className="dropdown-item" to={"/category"} onClick={() => fetchGameByCategory(category.id)}>{category.name}</Link>
                     </li>
                   ))}
                 </ul>
+
               </li>
                 <li className="nav-item">
                 <button 

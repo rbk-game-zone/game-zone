@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { updateUser } from '../store/authSlice';
 import './profile.css';
 import { RootState } from '../store/store';
+
 const Profile = () => {
 const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   const user = storedUser || useSelector((state: RootState ) => state.auth.user);
@@ -26,7 +27,8 @@ const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
     const storedAvatar = localStorage.getItem('avatar'); // Fetch stored avatar
-  
+    console.log(storedUser);
+
     if (storedUser) {
       setProfileData((prevData) => ({
         ...prevData,
@@ -42,11 +44,9 @@ const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   
       setAvatarPreview(storedAvatar || ''); // Ensure preview stays correct
     }
+    console.log(user);
   }, []);  // ✅ Empty dependency array prevents infinite loop
-  
-  
-  
-  
+
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '');  // Avatar preview state
 
   // Array of available avatar icons (can be URLs or local paths to images)
