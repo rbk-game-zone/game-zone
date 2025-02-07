@@ -3,8 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const JSZip = require('jszip');
 const { exec } = require('child_process');
-const open = require('open');
-const { Score } = require('../model/index');
+const { Category } = require('../model/index');
 
 module.exports = {
     createGame: async (req, res) => {
@@ -50,13 +49,17 @@ module.exports = {
                     fs.writeFileSync(filePath, await file.async('nodebuffer'));
                 }
             }
-
+            const category = await Category.findOne({ where: { name: req.body.category } });
+            if (!category) {
+                return res.status(404).json({ message: "Category not found" });
+            }
             // Save game data in the database
             const game = await Game.create({
                 title: req.body.title,
                 description: req.body.description,
                 game_file: gameDir, // Store the directory path
-                thumbnail: req.body.thumbnail // Store the image URL directly from the request body
+                thumbnail: req.body.thumbnail, // Store the image URL directly from the request body
+                category_id: category.id
             });
 
             res.status(201).json(game);
@@ -129,33 +132,23 @@ module.exports = {
             res.status(500).json({ message: "Error unzipping and running game", error: error.message });
         }
     },
-    submitScore: async (req, res) => {
-        const { user_id, game_id, score } = req.body;
-
+    getGamesByCategory: async (req, res) => {
+        const { category } = req.params;
         try {
-            // Check if a score already exists for this user and game
-            const existingScore = await Score.findOne({
-                where: { user_id, game_id }
-            });
-
-            if (existingScore) {
-                // Compare and update if the new score is higher
-                if (score > existingScore.score) {
-                    existingScore.score = score; // Update to the new score
-                    await existingScore.save(); // Save the updated score
-                    return res.status(200).json({ message: 'Score updated successfully', score: existingScore });
-                } else {
-                    return res.status(200).json({ message: 'Score not high enough to update', score: existingScore });
-                }
-            } else {
-                // Create a new score entry
-                const newScore = await Score.create({ user_id, game_id, score });
-                return res.status(201).json({ message: 'Score submitted successfully', score: newScore });
-            }
+            const games = await Game.findAll({ where: { category_id: category } });
+            res.status(200).json(games);
         } catch (error) {
-            console.error('Error submitting score:', error);
-            res.status(500).json({ message: 'Error submitting score', error: error.message });
+            console.error('Error fetching games by category:', error);
+            res.status(500).json({ message: "Error fetching games by category", error: error.message });
         }
+    },
+    getCategories: async (req, res) => {
+        const categories = await Category.findAll();
+        res.status(200).json(categories);
+    },
+    addCategory: async (req, res) => {
+        const category = await Category.create({ name: req.body.name });
+        res.status(201).json(category);
     }
 };
 
