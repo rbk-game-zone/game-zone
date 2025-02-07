@@ -52,7 +52,7 @@ const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   // Array of available avatar icons (can be URLs or local paths to images)
   const availableAvatars = [
     'https://th.bing.com/th/id/OIP.BZDN5jtCETHvCmYtgEV8eAHaHa?w=184&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7', // Replace with actual URLs or paths to icons
-    'avatar2.png',
+    'https://cdn-icons-png.flaticon.com/128/528/528111.png',
     'avatar3.png',
     'avatar4.png',
     'avatar5.png',
@@ -117,11 +117,7 @@ const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
                   className="avatar-img"
                 />
               </div>
-              <div className="profile-name">{user?.firstname} {user?.lastname}</div>
-              <p className="profile-role">{user?.role}</p>
-              <p className="profile-email">{user?.email}</p>
-              <p className="profile-sexe">{user?.sexe}</p>
-              <p className="profile-address">{user?.address}</p>
+              <div className="profile-name">{user?.username}</div>
             </div>
 
             <div className="profile-details">
@@ -131,17 +127,18 @@ const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
                   <div className="profile-field">
                     <label>Choose Avatar:</label>
                     <div className="avatar-selection">
-                      {availableAvatars.map((avatar, index) => (
+                      {availableAvatars.map((avatarr, index) => (
                         <div
                           key={index}
                           className="avatar-option"
-                          onClick={() => handleAvatarSelect(avatar)}
+                          onClick={() => handleAvatarSelect(avatarr)}
                         >
-                          <img
-                            src={avatarPreview || localStorage.getItem('avatar') || 'default-avatar.png'}  // Use stored avatar
-                            alt="Avatar"
-                            className="avatar-img"
-                                                      />
+                         <img
+  src={avatarr}  // ✅ Each avatar shows its own unique image
+  alt="Avatar"
+  className={`avatar-img ${avatarPreview === avatarr ? 'selected-avatar' : ''}`}
+/>
+
                         </div>
                       ))}
                     </div>

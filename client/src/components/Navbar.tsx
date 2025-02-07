@@ -1,9 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Category } from "../types/tables/category";
 import axios from "axios";
+
 function Navbar() {
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear any authentication tokens or user data from localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Redirect to login page
+    navigate('/login');
+  };
+
 
   useEffect(() => {
     // Fetch the categories from your backend API
@@ -32,7 +43,7 @@ function Navbar() {
               <li className="nav-item">
                 <Link className="nav-link" to="/">Home</Link>
               </li>
-              <li className="nav-item">
+              <li className="nav-item">²²²²
                 <Link className="nav-link" to="/login">Login</Link>
               </li>
               <li className="nav-item">
@@ -51,9 +62,14 @@ function Navbar() {
                   ))}
                 </ul>
               </li>
-              <li className="nav-item">
-                <a className="nav-link disabled" aria-disabled="true">Disabled</a>
-              </li>
+                <li className="nav-item">
+                <button 
+                  className="nav-link" 
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+                </li>
             </ul>
             <form className="d-flex" role="search">
               <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
