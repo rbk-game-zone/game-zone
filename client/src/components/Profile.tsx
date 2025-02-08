@@ -187,12 +187,12 @@ const Profile = () => {
           {editMode ? (
             <>
               <button className="btn btn-primary" onClick={handleUpdate}>Save Changes</button>
-              <button className="btn btn-secondary" onClick={() => setEditMode(false)}>Cancel</button>
+              <button className="btn   text-white btn-secondary" onClick={() => setEditMode(false)}>Cancel</button>
             </>
           ) : (
-            <button className="btn btn-warning" onClick={() => setEditMode(true)}>Edit Profile</button>
+            <button className="btn btn-primary" onClick={() => setEditMode(true)}>Edit Profile</button>
           )}
-          <button className="btn btn-info" onClick={() => navigate('/change-password')}>Change Password</button>
+          <button className="btn text-white btn-info" onClick={() => navigate('/change-password')} style={{backgroundColor:'rgba(255, 0, 0, 0.4)'}}>Change Password</button>
         </div>
       </div>
     </div>

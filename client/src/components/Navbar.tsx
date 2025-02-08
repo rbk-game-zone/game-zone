@@ -95,10 +95,11 @@ function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
                 id="userDropdown"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
+                
               >
                 <div
-                  className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
-                  style={{ width: "30px", height: "30px", fontSize: "10px" }}
+                  className="rounded-circle  text-white d-flex justify-content-center align-items-center"
+                  style={{ width: "25px", height: "25px", fontSize: "10px" , backgroundColor : "rgba(255, 0, 0, 0.5)"}}
                 >
                   {user?.username ? user.username.charAt(0).toUpperCase() : "U"}
                 </div>
