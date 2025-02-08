@@ -4,17 +4,15 @@ import axios from "axios";
 import io from "socket.io-client";
 import { FaComments } from "react-icons/fa";
 import { timeAgo } from "../utils/timeUtils";
-import "./Chat.css";
 
 const socket = io("http://localhost:8000");
 
-const home = () => {
+const Home = () => {
     const { id } = useParams();
     const [games, setGames] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [rooms, setRooms] = useState([]);
-    const [hoveredGameId, setHoveredGameId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [currentRoom, setCurrentRoom] = useState(null);
     const [messageContent, setMessageContent] = useState("");
@@ -36,12 +34,6 @@ const home = () => {
         };
         fetchGames();
 
-        const fetchRooms = async () => {
-            const response = await axios.get("http://localhost:8000/api/chat/rooms");
-            setRooms(response.data);
-        };
-        fetchRooms();
-
         socket.on("newMessage", (message) => setMessages((prev) => [...prev, message]));
         socket.on("roomCreated", (room) => setRooms((prev) => [...prev, room]));
 
@@ -50,12 +42,6 @@ const home = () => {
             socket.off("roomCreated");
         };
     }, []);
-
-    useEffect(() => {
-        if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [messages]);
 
     const handleGameClick = async (gameId) => {
         try {
@@ -91,99 +77,77 @@ const home = () => {
     };
 
     return (
-        <div className="game-chat-container">
-            <div className="game-section">
-                {loading ? (
-                    <div>Loading...</div>
-                ) : error ? (
-                    <div>{error}</div>
-                ) : (
-                    <div className="game-container">
-                        {games.map((game) => (
-                            <div 
-                                key={game.id} 
-                                className="game-card" 
-                                onClick={() => handleGameClick(game.id)}
-                                onMouseEnter={() => setHoveredGameId(game.id)}
-                                onMouseLeave={() => setHoveredGameId(null)}
-                                style={{ position: 'relative' }}
-                            >
-                                <img src={game.thumbnail} alt={game.title} style={{ width: "300px" }} />
-                                <h3>{game.title}</h3>
-                                {hoveredGameId === game.id && (
-                                    <div 
-                                        style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            background: 'rgba(147, 145, 145, 0.8)',
-                                            color: 'white',
-                                            padding: '2px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            textAlign: 'center',
-                                            transition: 'all 0.3s ease',
-                                            zIndex: 1
-                                        }}
-                                    >
-                                        <p>{game.description}</p>
+        <div className="container mt-4">
+            <h1 className="text-center mb-4">Game Lobby</h1>
+            {!isChatVisible && (
+                <>
+                    {loading ? (
+                        <div className="text-center">Loading...</div>
+                    ) : error ? (
+                        <div className="alert alert-danger">{error}</div>
+                    ) : (
+                        <div className="row">
+                            {games.map((game) => (
+                                <div key={game.id} className="col-md-4 mb-4">
+                                    <div className="card h-100 shadow-sm" onClick={() => handleGameClick(game.id)}>
+                                        <img src={game.thumbnail} className="card-img-top" alt={game.title} />
+                                        <div className="card-body">
+                                            <h5 className="card-title">{game.title}</h5>
+                                            <p className="card-text">{game.description}</p>
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-            <div className="chat-section">
-                <button onClick={() => setIsChatVisible(!isChatVisible)} className="chat-icon">
-                    <FaComments size={24} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
+            <div className="chat-section mt-5">
+                <button onClick={() => setIsChatVisible(!isChatVisible)} className="btn btn-primary chat-toggle-btn">
+                    <FaComments size={24} /> {isChatVisible ? "Close Chat" : "Chat"}
                 </button>
                 {isChatVisible && (
-                    <div className="chat-container">
-                        <div className="room-list">
-                            <h2>Rooms</h2>
+                    <div className="chat-container card mt-3 p-3">
+                        <h2 className="chat-header">Chat Rooms</h2>
+                        <div className="chat-room-input mb-3">
                             <input
                                 type="text"
+                                className="form-control chat-room-name"
                                 value={roomName}
                                 onChange={(e) => setRoomName(e.target.value)}
                                 placeholder="Room Name"
                             />
-                            <button onClick={createRoom}>Create Room</button>
-                            <ul>
-                                {rooms.map((room) => (
-                                    <li key={room.id} onClick={() => joinRoom(room.id)}>
-                                        {room.name}
-                                    </li>
-                                ))}
-                            </ul>
+                            <button className="btn btn-success mt-2 chat-create-btn" onClick={createRoom}>Create Room</button>
                         </div>
-                        <div className="message-area">
-                            <h2>Messages in Room: {currentRoom ? rooms.find((room) => room.id === currentRoom)?.name : ""}</h2>
-                            <div className="messages">
-                                {messages.map((msg) => (
-                                    <div key={msg.id} className={`message ${msg.User?.id === user.id ? "my-message" : "other-message"}`}>
-                                        <div className="message-content">
-                                            <strong>{msg.User?.username || user.username}:</strong>
-                                            {msg.content}
-                                            <span className="timestamp">{timeAgo(new Date(msg.createdAt))}</span>
+                        <select className="form-select chat-room-select mb-3" onChange={(e) => joinRoom(e.target.value)}>
+                            <option value="">Select a Room</option>
+                            {rooms.map((room) => (
+                                <option key={room.id} value={room.id}>{room.name}</option>
+                            ))}
+                        </select>
+                        {currentRoom && (
+                            <div className="chat-messages-container mt-4">
+                                <h2 className="chat-messages-header">Messages</h2>
+                                <div className="chat-box p-3 border rounded" style={{ height: "300px", overflowY: "scroll" }}>
+                                    {messages.map((msg) => (
+                                        <div key={msg.id} className="chat-message mb-2">
+                                            <strong>{msg.User?.username || user.username}:</strong> {msg.content}
+                                            <span className="text-muted small ms-2 chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
                                         </div>
-                                    </div>
-                                ))}
-                                <div ref={messagesEndRef} />
+                                    ))}
+                                </div>
+                                <div className="chat-input-container mt-3">
+                                    <input
+                                        type="text"
+                                        className="form-control chat-input"
+                                        value={messageContent}
+                                        onChange={(e) => setMessageContent(e.target.value)}
+                                        placeholder="Type a message..."
+                                    />
+                                    <button className="btn btn-primary mt-2 chat-send-btn" onClick={sendMessage}>Send</button>
+                                </div>
                             </div>
-                            <div className="input-area">
-                                <input
-                                    type="text"
-                                    value={messageContent}
-                                    onChange={(e) => setMessageContent(e.target.value)}
-                                    placeholder="Type a message..."
-                                />
-                                <button onClick={sendMessage}>Send</button>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -191,4 +155,4 @@ const home = () => {
     );
 };
 
-export default home;
+export default Home;

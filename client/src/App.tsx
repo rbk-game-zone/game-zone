@@ -39,31 +39,30 @@ function App() {
 
 
 
-    return (
+      return (
         <Router>
         <Navbar fetchGameByCategory={fetchGameByCategory}/>
             <Routes>
-                <Route path="/" element={<Login />} />
+            <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                
-                
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route path="/admin" element={<Admin />} />
-                    <Route path="/home" element={<Home />} />
                 </Route>
                 <Route path="/category" element={<Category games={games} />} />
                 <Route element={<ProtectedRoute allowedRoles={['player']} />}>
-                    {/* <Route path="/game" element={<Game />} /> */}
-                    {/* <Route path="/chat" element={<Chat />} /> */}
+                    {/* <Route path="/game" element={<Game />} /> /}
+                    {/ <Route path="/chat" element={<Chat />} /> */}
                     <Route path="/panel" element={<AdminPanel />} />
-                    <Route path="/home" element={<Home />} /></Route>
+                </Route>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/change-password" element={<ChangePassword />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
             </Routes>
-        </>
+        </Router>
+
     );
 }
 

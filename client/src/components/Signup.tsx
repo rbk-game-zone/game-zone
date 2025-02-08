@@ -15,11 +15,38 @@ const Signup: React.FC = () => {
         address: '',
         sexe: ''
     });
+    
+    const [passwordStrength, setPasswordStrength] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
+    const validatePassword = (password: string) => {
+        // Check the length, numbers, and special characters
+        const hasNumber = /\d/;
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+        const minLength = 8;
+
+        if (password.length >= minLength && hasNumber.test(password) && hasSpecialChar.test(password)) {
+            setPasswordStrength('Strong');
+        } else if (password.length >= minLength && hasNumber.test(password)) {
+            setPasswordStrength('Medium');
+        } else if (password.length >= minLength) {
+            setPasswordStrength('Weak');
+        } else {
+            setPasswordStrength('');
+            setPasswordError('Password must be at least 8 characters long.');
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (formData.password.length < 8) {
+            setPasswordError('Password must be at least 8 characters long.');
+            return;
+        }
+
         try {
             await dispatch(registerUser(formData)).unwrap();
             navigate('/login');
@@ -29,10 +56,17 @@ const Signup: React.FC = () => {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [name]: value
         });
+
+        if (name === 'password') {
+            validatePassword(value);  // Update password strength on each input change
+        } else if (name === 'password' && value.length >= 8) {
+            setPasswordError('');
+        }
     };
 
     return (
@@ -75,6 +109,16 @@ const Signup: React.FC = () => {
                                 onChange={handleChange}
                                 required
                             />
+                            {formData.password && (
+                                <small className={`text-${passwordStrength === 'Strong' ? 'success' : passwordStrength === 'Medium' ? 'warning' : 'danger'}`}>
+                                    {passwordStrength ? `Password Strength: ${passwordStrength}` : ''}
+                                </small>
+                            )}
+                            {passwordError && (
+                                <div className="text-danger mt-2">
+                                    {passwordError}
+                                </div>
+                            )}
                         </div>
                         <div className="col-md-6 mb-3">
                             <label className="form-label">First Name:</label>
@@ -139,7 +183,9 @@ const Signup: React.FC = () => {
                             </select>
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-primary w-100">Sign Up</button>
+                    <button type="submit" className="btn btn-primary w-100" disabled={formData.password.length < 8}>
+                        Sign Up
+                    </button>
                 </form>
             </div>
         </div>

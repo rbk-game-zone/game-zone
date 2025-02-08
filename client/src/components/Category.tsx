@@ -1,21 +1,24 @@
 import React from 'react';
 
-const Category = ({games}:{games:any}) => {
-    console.log(games,"gamessssssssssssssssssssssssssssssssssssssssssssssssssss");
+
+const Category = ({ games }: { games: any }) => {
+    console.log(games, "gamessssssssssssssssssssssssssssssssssssssssssssssssssss");
     return (
-        <div>
-            <h1>Category</h1>
-
-            {games.map((game:any)=>(
-                <div key={game.id}>
-                    <h2>{game.title}</h2>
-                    <h2>{game.description}</h2>
-                    <img src={game.thumbnail} />
-                </div>
-            ))}
+        <div className="container mt-4">
+            <div className="row">
+                {games.map((game: any) => (
+                    <div key={game.id} className="col-md-4 mb-4">
+                        <div className="card h-100 shadow-sm">
+                            <img src={game.thumbnail} className="card-img-top" alt={game.title} />
+                            <div className="card-body">
+                                <h5 className="card-title">{game.title}</h5>
+                                <p className="card-text">{game.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
-
-
     );
 };
 
