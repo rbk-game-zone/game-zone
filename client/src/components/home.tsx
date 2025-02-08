@@ -13,7 +13,7 @@ const Home = () => {
     const [filteredGames, setFilteredGames] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchQuery, setSearchQuery] = useState(""); // State for search query
+    const [searchQuery, setSearchQuery] = useState("");
     const [rooms, setRooms] = useState([]);
     const [messages, setMessages] = useState([]);
     const [currentRoom, setCurrentRoom] = useState(null);
@@ -28,7 +28,7 @@ const Home = () => {
             try {
                 const response = await axios.get("http://localhost:8000/api/");
                 setGames(response.data);
-                setFilteredGames(response.data); // Set filtered games initially to all games
+                setFilteredGames(response.data);
                 setLoading(false);
             } catch (err) {
                 setError("Failed to load games. Please try again later.");
@@ -47,7 +47,6 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        // Filter games based on search query
         if (searchQuery) {
             const filtered = games.filter(game => game.title.toLowerCase().includes(searchQuery.toLowerCase()));
             setFilteredGames(filtered);
@@ -91,17 +90,30 @@ const Home = () => {
 
     return (
         <div className="container mt-4">
-            <h1 id="gamelobby" className="text-center mb-4">Game Lobby</h1>
-            {/* Search Bar */}
-            <div className="mb-4">
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search games..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)} // Update search query
-                />
-            </div>
+            {/* Chat Toggle Button */}
+            <button
+                onClick={() => setIsChatVisible(!isChatVisible)}
+                className="btn btn-primary chat-toggle-btn"
+                style={{ backgroundColor: "olive" }}
+            >
+                <FaComments size={24} /> {isChatVisible ? "Close Chat" : "Chat"}
+            </button>
+
+            {!isChatVisible && (
+                <>
+                    <h1 id="gamelobby" className="text-center mb-4">Game Lobby</h1>
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search games..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                </>
+            )}
+
             {!isChatVisible && (
                 <>
                     {loading ? (
@@ -127,11 +139,9 @@ const Home = () => {
                     )}
                 </>
             )}
+
             {/* Chat Section */}
             <div className="chat-section mt-5">
-                <button onClick={() => setIsChatVisible(!isChatVisible)} className="btn btn-primary chat-toggle-btn" style={{ "backgroundColor": "olive" }}>
-                    <FaComments size={24} /> {isChatVisible ? "Close Chat" : "Chat"}
-                </button>
                 {isChatVisible && (
                     <div className="chat-container card mt-3 p-3">
                         <h2 className="chat-header">Chat Rooms</h2>
@@ -154,11 +164,11 @@ const Home = () => {
                         {currentRoom && (
                             <div className="chat-messages-container mt-4">
                                 <h2 className="chat-messages-header">Messages</h2>
-                                <div className="chat-box p-3 border rounded" style={{ height: "300px", overflowY: "scroll", backgroundColor:"gray" }}>
+                                <div className="chat-box p-3 border rounded" style={{ height: "300px", overflowY: "scroll", backgroundColor: "gray" }}>
                                     {messages.map((msg) => (
                                         <div key={msg.id} className="chat-message mb-2">
                                             <strong>{msg.User?.username || user.username}:</strong> {msg.content}
-                                            <span className="text-muted small ms-2 chat-timestamp" >{timeAgo(new Date(msg.createdAt))}</span>
+                                            <span className="text-muted small ms-2 chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -180,6 +190,5 @@ const Home = () => {
         </div>
     );
 };
-
 
 export default Home;

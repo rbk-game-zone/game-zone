@@ -1,39 +1,14 @@
-.chat-container {
-    width: 400px;
-    margin: 20px auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color:rgba(128, 128, 128, 0.5);
-    backdrop-filter: blur(5px);
-  }
-  
-  .chat-box {
-    height: 300px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-top: 10px;
-  }
-  
-  .chat-message {
-    margin-bottom: 5px;
-  }
-  
-  input {
-    margin-right: 5px;
-    padding: 5px;
-  }
-  .chat-icon {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
+.chat-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000; /* Ensure it's above other content */
+    padding: 10px 20px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-  button {
-    padding: 5px 10px;
-  }
   /* Page background */
   html, body {
     height: 100%; /* Ensure both html and body take up full viewport height */
@@ -266,16 +241,4 @@ button {
 }
 .table-striped{
     background-color: rgba(28, 28, 28, 0.5); 
-}/* styles.css */
-.table, .table th, .table td {
-    background-color: rgba(28, 28, 28, 0.5) !important;
-    color: white !important;
-}
-
-.table th {
-    text-align: center;
-}
-
-.table td {
-    text-align: left;
 }
