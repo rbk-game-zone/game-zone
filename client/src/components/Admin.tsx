@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import UpdateUser from "./UpdateUser";
 
@@ -63,11 +64,14 @@ const Admin: React.FC = () => {
     return (
         <div className="container mt-5">
             <header className="mb-4">
-                <h1 className="text-center">Admin Dashboard</h1>
+                <div id='bochra'> <h1 className="text-center">Admin Dashboard</h1></div>
             </header>
             <div className="card shadow-sm">
                 <div className="card-body">
-                    <h2 className="mb-4">User Management</h2>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <h2>User Management</h2>
+                        <Link to="/panel" className="btn btn-secondary">Add Game</Link>
+                    </div>
 
                     {/* Search Input */}
                     <div className="mb-4">
@@ -80,13 +84,13 @@ const Admin: React.FC = () => {
                         />
                     </div>
 
-                    <table className="table table-striped table-bordered">
+                    <table className="table table-striped table-bordered" style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Actions</th>
+                                <th style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>Name</th>
+                                <th style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>Email</th>
+                                <th style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>Role</th>
+                                <th style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -99,7 +103,7 @@ const Admin: React.FC = () => {
                                         {editingUser === user ? (
                                             <>
                                                 <UpdateUser user={user} onUpdate={handleUpdateUser} />
-                                                <button className="btn btn-warning btn-sm ms-2" onClick={handleCancelEdit}>
+                                                <button className="btn btn-warning text-white btn-sm ms-2" onClick={handleCancelEdit} style={{backgroundColor:" rgba(204, 243, 99, 0.7)"}}>
                                                     Cancel
                                                 </button>
                                             </>
@@ -108,7 +112,7 @@ const Admin: React.FC = () => {
                                                 <button className="btn btn-primary btn-sm ms-2" onClick={() => handleEditUser(user)}>
                                                     Edit
                                                 </button>
-                                                <button className="btn btn-danger btn-sm ms-2" onClick={() => handleDeleteUser(user.id)}>
+                                                <button className="btn btn-danger text-white btn-sm ms-2" onClick={() => handleDeleteUser(user.id)} style={{backgroundColor:'rgba(255, 0, 0, 0.4)'}}>
                                                     Delete
                                                 </button>
                                             </>

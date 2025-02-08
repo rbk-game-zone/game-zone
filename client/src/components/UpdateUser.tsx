@@ -53,9 +53,9 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-4 border rounded shadow-sm bg-light">
+        <form onSubmit={handleSubmit} className="p-4 border rounded shadow-sm" style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>
             <div className="mb-3">
-                <label htmlFor="username" className="form-label">
+                <label htmlFor="username" className="form-label" style={{ color: 'white' }}>
                     Username:
                 </label>
                 <input
@@ -65,10 +65,11 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
                     className="form-control"
                     value={formData.username}
                     onChange={(e) => handleChange(e)}
+                    style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}
                 />
             </div>
             <div className="mb-3">
-                <label htmlFor="email" className="form-label">
+                <label htmlFor="email" className="form-label" style={{ color: 'white' }}>
                     Email:
                 </label>
                 <input
@@ -78,10 +79,11 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
                     className="form-control"
                     value={formData.email}
                     onChange={(e) => handleChange(e)}
+                    style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}
                 />
             </div>
             <div className="mb-3">
-                <label htmlFor="role" className="form-label">
+                <label htmlFor="role" className="form-label" style={{ color: 'white' }}>
                     Role:
                 </label>
                 <select
@@ -90,13 +92,14 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
                     className="form-select"
                     value={formData.role}
                     onChange={(e) => handleChange(e)}
+                    style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}
                 >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                 </select>
             </div>
             <div className="mb-3">
-                <label htmlFor="sexe" className="form-label">
+                <label htmlFor="sexe" className="form-label" style={{ color: 'white' }}>
                     Sexe:
                 </label>
                 <select
@@ -105,13 +108,14 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
                     className="form-select"
                     value={formData.sexe}
                     onChange={(e) => handleChange(e)}
+                    style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}
                 >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                 </select>
             </div>
-            <button type="submit" className="btn btn-primary w-100">
+            <button type="submit" className="btn btn-primary w-100" style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>
                 Update User
             </button>
         </form>

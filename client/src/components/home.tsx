@@ -10,8 +10,10 @@ const socket = io("http://localhost:8000");
 const Home = () => {
     const { id } = useParams();
     const [games, setGames] = useState([]);
+    const [filteredGames, setFilteredGames] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState(""); // State for search query
     const [rooms, setRooms] = useState([]);
     const [messages, setMessages] = useState([]);
     const [currentRoom, setCurrentRoom] = useState(null);
@@ -26,6 +28,7 @@ const Home = () => {
             try {
                 const response = await axios.get("http://localhost:8000/api/");
                 setGames(response.data);
+                setFilteredGames(response.data); // Set filtered games initially to all games
                 setLoading(false);
             } catch (err) {
                 setError("Failed to load games. Please try again later.");
@@ -42,6 +45,16 @@ const Home = () => {
             socket.off("roomCreated");
         };
     }, []);
+
+    useEffect(() => {
+        // Filter games based on search query
+        if (searchQuery) {
+            const filtered = games.filter(game => game.title.toLowerCase().includes(searchQuery.toLowerCase()));
+            setFilteredGames(filtered);
+        } else {
+            setFilteredGames(games);
+        }
+    }, [searchQuery, games]);
 
     const handleGameClick = async (gameId) => {
         try {
@@ -78,7 +91,17 @@ const Home = () => {
 
     return (
         <div className="container mt-4">
-            <h1 className="text-center mb-4">Game Lobby</h1>
+            <h1 id="gamelobby" className="text-center mb-4">Game Lobby</h1>
+            {/* Search Bar */}
+            <div className="mb-4">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search games..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+                />
+            </div>
             {!isChatVisible && (
                 <>
                     {loading ? (
@@ -87,26 +110,26 @@ const Home = () => {
                         <div className="alert alert-danger">{error}</div>
                     ) : (
                         <div className="row">
-    {games.map((game) => (
-        <div key={game.id} className="col-md-4 mb-4">
-            <div className="card h-100 shadow-sm" onClick={() => handleGameClick(game.id)}>
-                <img src={game.thumbnail} className="card-img-top game-thumbnail" alt={game.title} />
-                <div className="card-body">
-                    <h5 className="card-title">{game.title}</h5>
-                    <div className="card-description">
-                        <p>{game.description}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    ))}
-</div>
-
+                            {filteredGames.map((game) => (
+                                <div key={game.id} className="col-md-4 mb-4">
+                                    <div className="card h-100 shadow-sm" onClick={() => handleGameClick(game.id)}>
+                                        <img src={game.thumbnail} className="card-img-top game-thumbnail" alt={game.title} />
+                                        <div className="card-body">
+                                            <h5 className="card-title">{game.title}</h5>
+                                            <div className="card-description">
+                                                <p>{game.description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </>
             )}
+            {/* Chat Section */}
             <div className="chat-section mt-5">
-                <button onClick={() => setIsChatVisible(!isChatVisible)} className="btn btn-primary chat-toggle-btn" style={{ "backgroundColor": "olive"}}>
+                <button onClick={() => setIsChatVisible(!isChatVisible)} className="btn btn-primary chat-toggle-btn" style={{ "backgroundColor": "olive" }}>
                     <FaComments size={24} /> {isChatVisible ? "Close Chat" : "Chat"}
                 </button>
                 {isChatVisible && (
@@ -157,5 +180,6 @@ const Home = () => {
         </div>
     );
 };
+
 
 export default Home;
