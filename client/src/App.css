@@ -236,4 +236,31 @@ button {
     margin: 0;
     padding: 0;
 } */
- 
+.game-thumbnail {
+    width: 100%;       /* Make image fill the width of its parent */
+    height: 200px;     /* Set a fixed height */
+    object-fit: cover; /* Ensure the image scales proportionally */
+}
+.card {
+    position: relative; /* Ensure the description is positioned relative to the card */
+}
+
+.card-description {
+    position: absolute;
+    bottom: 10px; /* Position the description near the bottom of the card */
+    left: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    visibility: hidden; /* Initially hidden */
+    opacity: 0;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+
+.card:hover .card-description {
+    visibility: visible; /* Show the description on hover */
+    opacity: 1;
+              /* Make the description fully opaque */
+}

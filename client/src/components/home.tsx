@@ -87,23 +87,26 @@ const Home = () => {
                         <div className="alert alert-danger">{error}</div>
                     ) : (
                         <div className="row">
-                            {games.map((game) => (
-                                <div key={game.id} className="col-md-4 mb-4">
-                                    <div className="card h-100 shadow-sm" onClick={() => handleGameClick(game.id)}>
-                                        <img src={game.thumbnail} className="card-img-top" alt={game.title} />
-                                        <div className="card-body">
-                                            <h5 className="card-title">{game.title}</h5>
-                                            <p className="card-text">{game.description}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+    {games.map((game) => (
+        <div key={game.id} className="col-md-4 mb-4">
+            <div className="card h-100 shadow-sm" onClick={() => handleGameClick(game.id)}>
+                <img src={game.thumbnail} className="card-img-top game-thumbnail" alt={game.title} />
+                <div className="card-body">
+                    <h5 className="card-title">{game.title}</h5>
+                    <div className="card-description">
+                        <p>{game.description}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    ))}
+</div>
+
                     )}
                 </>
             )}
             <div className="chat-section mt-5">
-                <button onClick={() => setIsChatVisible(!isChatVisible)} className="btn btn-primary chat-toggle-btn">
+                <button onClick={() => setIsChatVisible(!isChatVisible)} className="btn btn-primary chat-toggle-btn" style={{ "backgroundColor": "olive"}}>
                     <FaComments size={24} /> {isChatVisible ? "Close Chat" : "Chat"}
                 </button>
                 {isChatVisible && (
@@ -128,11 +131,11 @@ const Home = () => {
                         {currentRoom && (
                             <div className="chat-messages-container mt-4">
                                 <h2 className="chat-messages-header">Messages</h2>
-                                <div className="chat-box p-3 border rounded" style={{ height: "300px", overflowY: "scroll" }}>
+                                <div className="chat-box p-3 border rounded" style={{ height: "300px", overflowY: "scroll", backgroundColor:"gray" }}>
                                     {messages.map((msg) => (
                                         <div key={msg.id} className="chat-message mb-2">
                                             <strong>{msg.User?.username || user.username}:</strong> {msg.content}
-                                            <span className="text-muted small ms-2 chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
+                                            <span className="text-muted small ms-2 chat-timestamp" >{timeAgo(new Date(msg.createdAt))}</span>
                                         </div>
                                     ))}
                                 </div>

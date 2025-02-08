@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import UpdateUser from "./UpdateUser";
 
-
-
 const Admin: React.FC = () => {
     const [users, setUsers] = useState([]);
     const [editingUser, setEditingUser] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -15,10 +14,7 @@ const Admin: React.FC = () => {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
-                    
                 });
-                console.log(localStorage.getItem('token'));
-                console.log(response.data);  // Log the response data to see what is being returned
                 setUsers(response.data);
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -28,7 +24,7 @@ const Admin: React.FC = () => {
         fetchUsers();
     }, []);
 
-    const handleUpdateUser = (updatedUser ) => {
+    const handleUpdateUser = (updatedUser) => {
         setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
         setEditingUser(null);
     };
@@ -54,59 +50,78 @@ const Admin: React.FC = () => {
         }
     };
 
+    const handleSearch = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const filteredUsers = users.filter((user) =>
+        user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
-        <div className="admin-container">
-            <div className="admin-content">
-                <header className="admin-header">
-                    <h1>Admin Dashboard</h1>
-                </header>
-                <div className="admin-main">
-                    <div className="admin-section">
-                        <h2>User Management</h2>
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map((user) => (
-                                    <tr key={user.id}>
-                                        <td>{user.username}</td>
-                                        <td>{user.email}</td>
-                                        <td>{user.role}</td>
-                                        
-                                        <td>
-                                            {editingUser === user ? (
-                                                <>
-                                                    <UpdateUser user={user} onUpdate={handleUpdateUser} />
-                                                    <button className="admin-button" onClick={handleCancelEdit}>
-                                                        Cancel
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <button className="admin-button" onClick={() => handleEditUser(user)}>
-                                                        Edit
-                                                    </button>
-                                                    <button className="admin-button" onClick={() => handleDeleteUser(user.id)}>
-                                                        Delete
-                                                    </button>
-                                                </>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+        <div className="container mt-5">
+            <header className="mb-4">
+                <h1 className="text-center">Admin Dashboard</h1>
+            </header>
+            <div className="card shadow-sm">
+                <div className="card-body">
+                    <h2 className="mb-4">User Management</h2>
+
+                    {/* Search Input */}
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search by username, email, or role"
+                            value={searchQuery}
+                            onChange={handleSearch}
+                        />
                     </div>
+
+                    <table className="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredUsers.map((user) => (
+                                <tr key={user.id}>
+                                    <td>{user.username}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.role}</td>
+                                    <td>
+                                        {editingUser === user ? (
+                                            <>
+                                                <UpdateUser user={user} onUpdate={handleUpdateUser} />
+                                                <button className="btn btn-warning btn-sm ms-2" onClick={handleCancelEdit}>
+                                                    Cancel
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button className="btn btn-primary btn-sm ms-2" onClick={() => handleEditUser(user)}>
+                                                    Edit
+                                                </button>
+                                                <button className="btn btn-danger btn-sm ms-2" onClick={() => handleDeleteUser(user.id)}>
+                                                    Delete
+                                                </button>
+                                            </>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     );
 };
 
-export default Admin; 
+export default Admin;
