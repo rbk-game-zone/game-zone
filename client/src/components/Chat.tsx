@@ -143,3 +143,37 @@
 // };
 
 // export default Chat;
+
+import { useEffect } from 'react';
+import { io } from 'socket.io-client';
+
+const socket = io('http://your-server-url'); // Ensure this URL is correct
+
+const Chat = () => {
+    useEffect(() => {
+        socket.on('connect', () => {
+            console.log('Connected to chat server');
+        });
+
+        socket.on('message', (message) => {
+            console.log('New message received:', message);
+            // Handle incoming message
+        });
+
+        return () => {
+            socket.off('message');
+            socket.disconnect();
+        };
+    }, []);
+
+    const sendMessage = (message) => {
+        if (message) {
+            socket.emit('message', message);
+            console.log('Message sent:', message);
+        } else {
+            console.error('Cannot send an empty message');
+        }
+    };
+
+    // ... existing code for rendering chat UI ...
+};

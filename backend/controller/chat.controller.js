@@ -21,6 +21,6 @@ exports.postMessage = async (req, res) => {
     const newMessage = await db.Message.create({ room_id, user_id, content });
     res.status(201).json(newMessage);
   } catch (error) {
-    res.status(500).json({ error: "Failed to post message" });
+    res.status(500).json({ error: "Failed to post message", details: error.message });
   }
 };

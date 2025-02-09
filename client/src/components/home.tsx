@@ -5,6 +5,10 @@ import io from "socket.io-client";
 import { FaComments } from "react-icons/fa";
 import { timeAgo } from "../utils/timeUtils";
 import "./Chat.css";
+import VoiceChat from './VoiceChat';
+import Score from "../../../public/games/snake/score/score"
+import { useGameContext } from '../context/GameContext';
+import ErrorBoundary from './ErrorBoundary'; // Import the ErrorBoundary component
 
 const socket = io("http://localhost:8000");
 
@@ -20,8 +24,13 @@ const home = () => {
     const [messageContent, setMessageContent] = useState("");
     const [roomName, setRoomName] = useState("");
     const [isChatVisible, setIsChatVisible] = useState(false);
+    const [isVoiceChatVisible, setIsVoiceChatVisible] = useState(false);
     const messagesEndRef = useRef(null);
     const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const { setGameId } = useGameContext();
+
+    // Load notification sound
+    const notificationSound = new Audio('/notification-7-270142.mp3'); // Ensure this path is correct
 
     useEffect(() => {
         const fetchGames = async () => {
@@ -42,7 +51,10 @@ const home = () => {
         };
         fetchRooms();
 
-        socket.on("newMessage", (message) => setMessages((prev) => [...prev, message]));
+        socket.on("newMessage", (message) => {
+            setMessages((prev) => [...prev, message]);
+            notificationSound.play(); // Play notification sound on new message
+        });
         socket.on("roomCreated", (room) => setRooms((prev) => [...prev, room]));
 
         return () => {
@@ -58,10 +70,18 @@ const home = () => {
     }, [messages]);
 
     const handleGameClick = async (gameId) => {
+        setGameId(gameId); // Set the game ID in context
         try {
-            await axios.post(`http://localhost:8000/api/unzip/${gameId}`);
-        } catch (err) {
-            alert("Failed to start the game. Please try again later.");
+            const response = await axios.post(`http://localhost:8000/api/unzip/${gameId}`, {
+                user_id: user.id // Send the user ID in the request body
+            });
+            console.log(response.data.message); // Log the success message
+            window.postMessage({
+                userId: user.id,
+                gameId: gameId
+            }, '*'); // Use '*' to allow all origins or specify the target origin
+        } catch (error) {
+            console.error('Error starting the game:', error);
         }
     };
 
@@ -71,11 +91,15 @@ const home = () => {
     };
 
     const joinRoom = (roomId) => {
-        setCurrentRoom(roomId);
-        setMessages([]);
-        socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
-        fetchMessages(roomId);
-        setIsChatVisible(true);
+        if (user.id) {
+            socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
+            setCurrentRoom(roomId);
+            setMessages([]);
+            fetchMessages(roomId);
+            setIsChatVisible(true);
+        } else {
+            console.error("User ID is not defined.");
+        }
     };
 
     const fetchMessages = async (roomId) => {
@@ -184,6 +208,12 @@ const home = () => {
                                 <button onClick={sendMessage}>Send</button>
                             </div>
                         </div>
+                        <button onClick={() => setIsVoiceChatVisible(!isVoiceChatVisible)}>
+                            {isVoiceChatVisible ? "Stop Voice Chat" : "Start Voice Chat"}
+                        </button>
+                        <ErrorBoundary>
+                            <VoiceChat roomId={currentRoom} />
+                        </ErrorBoundary>
                     </div>
                 )}
             </div>

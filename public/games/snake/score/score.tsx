@@ -1,11 +1,29 @@
-import { getScoreValue } from '../src/components/GameOverScreen'; // Adjust the path as necessary
+import React from 'react';
+import { useLocation } from 'react-router-dom'; // Import useLocation
 
-// Function to get the score
-export const getScore = () => {
-    return getScoreValue(); // Call the function to return the score value
+interface ScoreProps {
+    highestScore: number; // Define props interface
+    userd: any; // Add this if you need it
+    games: any; // Add this if you need it
+}
+
+const Score: React.FC<ScoreProps> = ({ highestScore}) => {
+    const location = useLocation(); // Get the current location
+    const query = new URLSearchParams(location.search); // Parse the query parameters
+    const userId = query.get('userId'); // Get userId from query parameters
+    const gameId = query.get('gameId'); // Get gameId from query parameters
+console.log("userd",userd);
+console.log("games",games);
+
+
+    // Use highestScore as needed in your component
+
+    return (
+        <div>
+            <h1>Your Highest Score: {highestScore}</h1>
+            {/* Render other score information */}
+        </div>
+    );
 };
 
-// Now you can use getScore in this file
-console.log("Score from GameOverScreen:", getScore()); // This will log the score correctly
-
-export default getScore;
+export default Score;

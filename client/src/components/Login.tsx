@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../store/authSlice';
 import { AppDispatch } from '../store/store';
+import Swal from 'sweetalert2';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -14,7 +15,8 @@ const Login: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await dispatch(loginUser({ email, username, password })).unwrap();
+            const userData = await dispatch(loginUser({ email, username, password })).unwrap();
+            localStorage.setItem('user', JSON.stringify(userData)); // Store user data in local storage
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             console.log(user.role);
 
@@ -24,7 +26,12 @@ const Login: React.FC = () => {
                 navigate('/');
             }
         } catch (error) {
-            alert('Login failed. Please check your credentials.');
+            Swal.fire({
+                title: 'Error!',
+                text: error.response?.data?.message || 'Login failed.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
         }
     };
 

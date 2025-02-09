@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../store/authSlice';
 import { AppDispatch } from '../store/store';
+import Swal from 'sweetalert2';
 
 const Signup: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -22,6 +23,12 @@ const Signup: React.FC = () => {
         e.preventDefault();
         try {
             await dispatch(registerUser(formData)).unwrap();
+            Swal.fire({
+                title: 'Success!',
+                text: 'Registration successful!',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            });
             navigate('/login');
         } catch (error) {
             alert('Registration failed. Please try again.');

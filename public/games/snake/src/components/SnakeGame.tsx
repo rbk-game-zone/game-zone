@@ -2,12 +2,23 @@ import React, { useEffect, useState } from 'react';
 import Phaser from 'phaser';
 import StartScreen from './StartScreen';
 import GameOverScreen from './GameOverScreen';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../../client/src/store/store';
 
-const SnakeGame: React.FC = () => {
+interface SnakeGameProps {
+    gameId: number; // Accept gameId as a prop
+}
+
+const SnakeGame: React.FC<SnakeGameProps> = ({ gameId }) => {
     const [isGameOver, setIsGameOver] = useState(false);
     const [score, setScore] = useState(0);
     const [highestScore, setHighestScore] = useState(0);
     const [isGameStarted, setIsGameStarted] = useState(false);
+    
+    // Get userId from Redux store
+    const user = useSelector((state: RootState) => state.auth.user);
+    const userId = user ? user.id : null; // Assuming user object has an id property
 
     useEffect(() => {
         if (!isGameStarted) return;
@@ -153,7 +164,23 @@ const SnakeGame: React.FC = () => {
             setIsGameOver(true);
             moveTimer.destroy(); // Stop the snake movement
             game.destroy(true); // Destroy the Phaser game instance
+            if (userId && gameId) {
+                submitScore(userId, gameId, score); // Submit the score
+            }
         }
+
+        const submitScore = async (userId: number, gameId: number, score: number) => {
+            try {
+                const response = await axios.post('http://localhost:8000/api/scores', {
+                    user_id: userId,
+                    game_id: gameId,
+                    score: score,
+                });
+                console.log('Score submitted successfully:', response.data);
+            } catch (error) {
+                console.error('Error submitting score:', error.response ? error.response.data : error.message);
+            }
+        };
 
         return () => {
             game.destroy(true);
@@ -174,7 +201,11 @@ const SnakeGame: React.FC = () => {
         <div id="game-container">
             {!isGameStarted && <StartScreen onStart={handleStartGame} />}
             {isGameStarted && !isGameOver }
-            {isGameOver && <GameOverScreen score={score} highestScore={highestScore} onRestart={handleRestart} />}
+            {isGameOver && <GameOverScreen 
+                score={score} 
+                highestScore={highestScore} 
+                onRestart={handleRestart} 
+            />}
         </div>
     );
 };

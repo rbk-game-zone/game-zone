@@ -10,10 +10,15 @@ const server = http.createServer(app);
 const jwt = require('jsonwebtoken');
 const userRoute = require('./router/user.router');
 const gameRoute = require('./routes/gameRoutes');
+const scoreRoute = require('./routes/scoreRoutes');
 const path = require('path');
+const socketIo = require("socket.io");
 
-const io = require("socket.io")(server, {
-  cors: { origin: "*" },
+const io = socketIo(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+    },
 });
 
 // Middleware
@@ -26,6 +31,7 @@ const chatRoutes = require("./routes/chat.routes");
 app.use("/api/chat", chatRoutes);
 app.use('/api/user', userRoute);
 app.use('/api', gameRoute);
+app.use('/api/scores', scoreRoute);
 
 // Serve files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -34,6 +40,29 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Handle WebSockets
 socketHandler(io);
+
+const users = {};
+
+// Handle WebRTC signaling
+io.on("connection", (socket) => {
+    console.log("New user connected:", socket.id);
+
+    socket.on("joinRoom", (roomId) => {
+        socket.join(roomId);
+        console.log(`User ${socket.id} joined room ${roomId}`);
+    });
+
+    socket.on("signal", (data) => {
+        socket.to(data.roomId).emit("signal", {
+            signal: data.signal,
+            id: socket.id,
+        });
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
+    });
+});
 
 const PORT = process.env.PORT || 8000;
 

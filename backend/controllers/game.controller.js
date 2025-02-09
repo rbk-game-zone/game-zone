@@ -73,7 +73,7 @@ module.exports = {
             const games = await Game.findAll();
             res.status(200).json(games);
         } catch (error) {
-            console.error('Error fetching games:', error);
+            console.error('Error fetching games:', error.message);
             res.status(500).json({ message: "Error fetching games", error: error.message });
         }
     },
@@ -92,19 +92,20 @@ module.exports = {
     },
     unzipAndRunGame: async (req, res) => {
         const { id } = req.params;
+        const userId = req.body.user_id; // Assuming you send user_id in the request body
         try {
             const game = await Game.findByPk(id);
             if (!game) {
                 return res.status(404).json({ message: "Game not found" });
             }
-
+    
             const gameDir = path.join(__dirname, '../../public/games', game.title); // Construct the game directory path
-
+    
             // Check if the game directory exists
             if (!fs.existsSync(gameDir)) {
                 return res.status(404).json({ message: "Game directory does not exist" });
             }
-
+    
             // Execute npm install in the game directory
             exec(`cd "${gameDir}" && npm install`, (error, stdout, stderr) => {
                 if (error) {
@@ -113,7 +114,7 @@ module.exports = {
                 }
                 console.log(`npm install output: ${stdout}`);
                 console.error(`npm install error output: ${stderr}`);
-
+    
                 // Now run npm run dev
                 exec(`cd "${gameDir}" && npm run dev`, (error, stdout, stderr) => {
                     if (error) {
@@ -123,8 +124,8 @@ module.exports = {
                     console.log(`npm run dev output: ${stdout}`);
                     console.error(`npm run dev error output: ${stderr}`);
                     
-                    // Optionally, you can send a response indicating that the command was executed
-                    res.status(200).json({ message: "Game started successfully" });
+                    // Send user ID and game ID back to the client
+                    res.status(200).json({ message: "Game started successfully", userId, gameId: id, gameUrl: `/games/${game.title}` });
                 });
             });
         } catch (error) {

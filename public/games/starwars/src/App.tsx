@@ -112,7 +112,7 @@ class GameScene extends Phaser.Scene {
     this.load.image("airplane", plane)
     this.load.image(
       "meteor",
-      "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=300&q=80",
+      "https://cdn.discordapp.com/attachments/1313211740913274920/1337536629467774986/Clipped_image_20250207_223236.png?ex=67a7cd8e&is=67a67c0e&hm=3e66cc601e6c778dd8a033f3da09ee52d0476f13714be2e9f814453b0e8830d8&",
     )
 
     // Load space background layers
