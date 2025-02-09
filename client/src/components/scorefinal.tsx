@@ -4,10 +4,11 @@ import axios from "axios"
 
 function scorefinal() {
     const [rankedScores, setRankedScores] = useState([]);
+    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         const fetchScores = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/scores");
+                const response = await axios.get(`${API_URL}/api/scores`);
                 setRankedScores(response.data);
             } catch (error) {
                 console.error("Error fetching scores:", error);

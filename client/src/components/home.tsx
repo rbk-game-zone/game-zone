@@ -34,7 +34,7 @@ const Home: React.FC = () => {
     const [isVoiceChatVisible, setIsVoiceChatVisible] = useState(false);
     const notificationSound = new Audio('/notification-7-270142.mp3'); // Ensure this path is correct
     const messagesEndRef = useRef(null);
-
+    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         const fetchGames = async () => {
             try {
@@ -49,7 +49,7 @@ const Home: React.FC = () => {
         };
         fetchGames();
         const fetchRooms = async () => {
-            const response = await axios.get("http://localhost:8000/api/chat/rooms");
+            const response = await axios.get(`${API_URL}/api/chat/rooms`);
             setRooms(response.data);
         };
         fetchRooms();

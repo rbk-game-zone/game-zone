@@ -36,7 +36,7 @@ const ResetPassword = () => {
 
     try {
       setIsLoading(true); // Start loading state
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Use environment variable
+      const apiUrl = import.meta.env.VITE_API_URL ; // Use environment variable
       const response = await axios.post(
         `${apiUrl}/api/user/reset-password`,
         { token, newPassword }
