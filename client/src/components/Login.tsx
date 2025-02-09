@@ -23,7 +23,7 @@ const Login: React.FC = () => {
             if (user.role === 'admin') {
                 navigate('/admin');
             } else {
-                navigate('/');
+                navigate('/home');
             }
         } catch (error) {
             Swal.fire({
@@ -84,6 +84,12 @@ const Login: React.FC = () => {
                             <p className="text-center mt-3">
                                 <Link to="/forgot-password" className="text-decoration-none">
                                     Forgot Password?
+                                </Link>
+                            </p>
+                            <p className="text-center mt-2">
+                                Don't have an account?{' '}
+                                <Link to="/signup" className="text-decoration-none">
+                                    Register here
                                 </Link>
                             </p>
                         </div>

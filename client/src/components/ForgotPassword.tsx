@@ -22,7 +22,7 @@ const ForgotPassword = () => {
           icon: 'success',
           confirmButtonText: 'OK',
         });
-        navigate('/login');
+        navigate('/');
       }
     } catch (error: any) {
       console.error('Error sending password reset email:', error);

@@ -36,7 +36,7 @@ const ResetPassword = () => {
           icon: 'success',
           confirmButtonText: 'OK',
         });
-        navigate('/login');
+        navigate('/');
       }
     } catch (error: any) {
       console.error('Error resetting password:', error);

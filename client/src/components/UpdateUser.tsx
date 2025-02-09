@@ -23,8 +23,6 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
             ...formData,
             [e.target.name]: e.target.value
         });
-        console.log(formData);
-        
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -55,31 +53,71 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                Username:
-                <input type="text" name="username" value={formData.username} onChange={(e) => handleChange(e)} />
-            </label>
-            <label>
-                Email:
-                <input type="email" name="email" value={formData.email} onChange={(e) => handleChange(e)} />
-            </label>
-            <label>
-                Role:
-                <select name="role" value={formData.role} onChange={(e) => handleChange(e)}>
+        <form onSubmit={handleSubmit} className="p-4 border rounded shadow-sm" style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>
+            <div className="mb-3">
+                <label htmlFor="username" className="form-label" style={{ color: 'white' }}>
+                    Username:
+                </label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    className="form-control"
+                    value={formData.username}
+                    onChange={(e) => handleChange(e)}
+                    style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}
+                />
+            </div>
+            <div className="mb-3">
+                <label htmlFor="email" className="form-label" style={{ color: 'white' }}>
+                    Email:
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    className="form-control"
+                    value={formData.email}
+                    onChange={(e) => handleChange(e)}
+                    style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}
+                />
+            </div>
+            <div className="mb-3">
+                <label htmlFor="role" className="form-label" style={{ color: 'white' }}>
+                    Role:
+                </label>
+                <select
+                    id="role"
+                    name="role"
+                    className="form-select"
+                    value={formData.role}
+                    onChange={(e) => handleChange(e)}
+                    style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}
+                >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                 </select>
-            </label>
-            <label>
-                Sexe:
-                <select name="sexe" value={formData.sexe} onChange={(e) => handleChange(e)}>
+            </div>
+            <div className="mb-3">
+                <label htmlFor="sexe" className="form-label" style={{ color: 'white' }}>
+                    Sexe:
+                </label>
+                <select
+                    id="sexe"
+                    name="sexe"
+                    className="form-select"
+                    value={formData.sexe}
+                    onChange={(e) => handleChange(e)}
+                    style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}
+                >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                 </select>
-            </label>
-            <button type="submit">Update User</button>
+            </div>
+            <button type="submit" className="btn btn-primary w-100" style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>
+                Update User
+            </button>
         </form>
     );
 };
