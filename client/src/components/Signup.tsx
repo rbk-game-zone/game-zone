@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../store/authSlice';
 import { AppDispatch } from '../store/store';
+import Swal from 'sweetalert2';
 
 const Signup: React.FC = () => {
     const [formData, setFormData] = useState({

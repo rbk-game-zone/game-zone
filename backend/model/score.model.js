@@ -19,7 +19,13 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-   
+  }, {
+    indexes: [
+      {
+        unique: true,
+        fields: ['user_id', 'game_id'] // Ensure unique score per user and game
+      }
+    ]
   });
 
   return Score;
