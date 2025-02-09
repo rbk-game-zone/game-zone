@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import UpdateUser from "./UpdateUser";
+import UpdateUser from './UpdateUser';
+import { User } from '../types/tables/user';
 
 const Admin: React.FC = () => {
-    const [users, setUsers] = useState([]);
-    const [editingUser, setEditingUser] = useState(null);
+    const [users, setUsers] = useState<User[]>([]);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [showCategoryForm, setShowCategoryForm] = useState(false);
     const [categoryName, setCategoryName] = useState('');
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/user/users', {
+                const response = await axios.get(`${API_URL}/api/user/users`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
@@ -25,14 +28,14 @@ const Admin: React.FC = () => {
         };
 
         fetchUsers();
-    }, []);
+    }, [API_URL]);
 
-    const handleUpdateUser = (updatedUser) => {
+    const handleUpdateUser = (updatedUser: User) => {
         setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
         setEditingUser(null);
     };
 
-    const handleEditUser = (user) => {
+    const handleEditUser = (user: User) => {
         setEditingUser(user);
     };
 
@@ -40,9 +43,9 @@ const Admin: React.FC = () => {
         setEditingUser(null);
     };
 
-    const handleDeleteUser = async (userId) => {
+    const handleDeleteUser = async (userId: number) => {
         try {
-            await axios.delete(`http://localhost:8000/api/user/users/${userId}`, {
+            await axios.delete(`${API_URL}/api/user/users/${userId}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
@@ -53,20 +56,8 @@ const Admin: React.FC = () => {
         }
     };
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
-    };
-
-    const addCategory = () => {
-        axios.post("http://localhost:8000/api/categories", { name: categoryName })
-            .then(() => {
-                alert("Category added");
-                setCategoryName('');
-                setShowCategoryForm(false);
-            })
-            .catch((err) => {
-                console.log("Adding category error", err);
-            });
     };
 
     const filteredUsers = users.filter((user) =>
@@ -86,9 +77,11 @@ const Admin: React.FC = () => {
                         <h2>User Management</h2>
                         <div>
                             <button className="btn btn-primary me-2" onClick={() => setShowCategoryForm(!showCategoryForm)}>
-                                {showCategoryForm ? "Back to Users" : "Add Category"}
+                                {showCategoryForm ? 'Back to Users' : 'Add Category'}
                             </button>
-                            <Link to="/panel" className="btn btn-secondary" style={{ backgroundColor: 'rgba(255, 0, 0, 0.4)' }}>Add Game</Link>
+                            <Link to="/panel" className="btn btn-secondary" style={{ backgroundColor: 'rgba(255, 0, 0, 0.4)' }}>
+                                Add Game
+                            </Link>
                         </div>
                     </div>
 
@@ -102,7 +95,7 @@ const Admin: React.FC = () => {
                                 value={categoryName}
                                 onChange={(e) => setCategoryName(e.target.value)}
                             />
-                            <button className="btn btn-success me-2" onClick={addCategory}>Add</button>
+                            <button className="btn btn-secondary me-2">Add</button>
                             <button className="btn btn-warning" onClick={() => setShowCategoryForm(false)}>Cancel</button>
                         </div>
                     ) : (
@@ -120,9 +113,14 @@ const Admin: React.FC = () => {
                             <table className="table table-striped table-bordered" style={{ backgroundColor: 'rgba(28, 28, 28, 0.5)', color: 'white' }}>
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
                                         <th>Email</th>
                                         <th>Role</th>
+                                        <th>Sexe</th>
+                                        <th>Age</th>
+                                        <th>Address</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -130,10 +128,15 @@ const Admin: React.FC = () => {
                                     {filteredUsers.map((user) => (
                                         <tr key={user.id}>
                                             <td>{user.username}</td>
+                                            <td>{user.first_name}</td>
+                                            <td>{user.last_name}</td>
                                             <td>{user.email}</td>
                                             <td>{user.role}</td>
+                                            <td>{user.sexe}</td>
+                                            <td>{user.age}</td>
+                                            <td>{user.address}</td>
                                             <td>
-                                                {editingUser === user ? (
+                                                {editingUser?.id === user.id ? (
                                                     <>
                                                         <UpdateUser user={user} onUpdate={handleUpdateUser} />
                                                         <button className="btn btn-warning text-white btn-sm ms-2" onClick={handleCancelEdit}>

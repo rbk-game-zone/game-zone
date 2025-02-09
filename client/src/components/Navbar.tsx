@@ -14,9 +14,8 @@ function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8000/api/categories"
-        );
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000"; // Use env variable or default to localhost
+        const response = await axios.get(`${apiUrl}/api/categories`);
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -24,26 +23,21 @@ function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
     };
     fetchCategories();
   }, []);
- 
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("avatar")
     navigate("/");
   };
 
   return (
     <div>
-      <nav
-        className="navbar navbar-expand-lg bg-body-tertiary"
-        data-bs-theme="dark"
-      >
+      <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
         <div className="container-fluid">
-         
-            <Link className="navbar-brand" to="/home" style={{ color: "white", textDecoration: "none" }}>
-              GameZone
-            </Link>
-          
+          <Link className="navbar-brand" to="/home" style={{ color: "white", textDecoration: "none" }}>
+            GameZone
+          </Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -83,8 +77,6 @@ function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
                         {category.name}
                       </Link>
                     </li>
-                    
-                    
                   ))}
                 </ul>
               </li>
@@ -98,19 +90,20 @@ function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
                 id="userDropdown"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-                
               >
                 <div
-                  className="rounded-circle  text-white d-flex justify-content-center align-items-center"
-                  style={{ width: "25px", height: "25px", fontSize: "10px" , backgroundColor : "rgba(255, 0, 0, 0.5)"}}
+                  className="rounded-circle text-white d-flex justify-content-center align-items-center"
+                  style={{
+                    width: "25px",
+                    height: "25px",
+                    fontSize: "10px",
+                    backgroundColor: "rgba(255, 0, 0, 0.5)"
+                  }}
                 >
                   {user?.username ? user.username.charAt(0).toUpperCase() : "U"}
                 </div>
               </button>
-              <ul
-                className="dropdown-menu dropdown-menu-end"
-                aria-labelledby="userDropdown"
-              >
+              <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li>
                   <Link className="dropdown-item" to="/profile">
                     Profile

@@ -9,7 +9,10 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleChangePassword = async (e) => {
+  // Dynamically use the VITE_API_URL from .env
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       Swal.fire({
@@ -24,7 +27,7 @@ const ChangePassword = () => {
     try {
       const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
       const response = await axios.post(
-        `http://localhost:8000/api/user/change-password`,
+        `${API_URL}/api/user/change-password`, // Use dynamic API URL here
         { userId, currentPassword, newPassword },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -40,7 +43,7 @@ const ChangePassword = () => {
         });
         navigate('/profile');
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error changing password:', error);
       Swal.fire({
         title: 'Error!',
@@ -56,11 +59,11 @@ const ChangePassword = () => {
       <div className="row justify-content-center">
         <div className="col-md-6">
           <div className="card">
-            <div className="card-header  text-white text-center">
-              <h3 id='changepassword'>Change Password</h3>
+            <div className="card-header text-white text-center">
+              <h3 id="changepassword">Change Password</h3>
             </div>
             <div className="card-body">
-              <form onSubmit={handleChangePassword}>
+            <form onSubmit={handleChangePassword}>
                 <div className="mb-3">
                   <label className="form-label">Current Password:</label>
                   <input
