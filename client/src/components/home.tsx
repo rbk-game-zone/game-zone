@@ -1,34 +1,40 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import { FaComments } from "react-icons/fa";
 import { timeAgo } from "../utils/timeUtils";
 import LoadingAnimation from "./LoadingAnimation"; // Import the loading animation
+import {Game} from "../types/tables/game"
+import {Room} from "../types/tables/room"
+import {Message} from "../types/tables/message"
+import { User } from "../types/tables/user"
 
-const socket = io("http://localhost:8000");
 
-const Home = () => {
-    const { id } = useParams();
-    const [games, setGames] = useState([]);
-    const [filteredGames, setFilteredGames] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [rooms, setRooms] = useState([]);
-    const [messages, setMessages] = useState([]);
-    const [currentRoom, setCurrentRoom] = useState(null);
-    const [messageContent, setMessageContent] = useState("");
-    const [roomName, setRoomName] = useState("");
-    const [isChatVisible, setIsChatVisible] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // State for loading animation
-    const messagesEndRef = useRef(null);
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+
+
+const socket: Socket = io(import.meta.env.VITE_API_URL); // Use the dynamic API URL from environment variables
+
+const Home: React.FC = () => {
+    const [games, setGames] = useState<Game[]>([]);
+    const [filteredGames, setFilteredGames] = useState<Game[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [currentRoom, setCurrentRoom] = useState<string | null>(null);
+    const [messageContent, setMessageContent] = useState<string>("");
+    const [roomName, setRoomName] = useState<string>("");
+    const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false); // State for loading animation
+    const user: User = JSON.parse(localStorage.getItem("user") || "{}");
 
     useEffect(() => {
         const fetchGames = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/");
+                const response = await axios.get<Game[]>(`${import.meta.env.VITE_API_URL}/api/`);
                 setGames(response.data);
                 setFilteredGames(response.data);
                 setLoading(false);
@@ -39,8 +45,8 @@ const Home = () => {
         };
         fetchGames();
 
-        socket.on("newMessage", (message) => setMessages((prev) => [...prev, message]));
-        socket.on("roomCreated", (room) => setRooms((prev) => [...prev, room]));
+        socket.on("newMessage", (message: Message) => setMessages((prev) => [...prev, message]));
+        socket.on("roomCreated", (room: Room) => setRooms((prev) => [...prev, room]));
 
         return () => {
             socket.off("newMessage");
@@ -74,7 +80,7 @@ const Home = () => {
         };
     }, []);
 
-    const handleGameClick = async (gameId) => {
+    const handleGameClick = async (gameId: string) => {
         setIsLoading(true); // Show loading animation
 
         let timeoutId;
@@ -86,17 +92,16 @@ const Home = () => {
             }, 15000); // 15 seconds in milliseconds
 
             // Unzip the game (this will happen after the delay)
-            await axios.post(`http://localhost:8000/api/unzip/${gameId}`);
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/unzip/${gameId}`);
         } catch (err) {
             alert("Failed to start the game. Please try again later.");
             setIsLoading(false); // Hide loading animation if there's an error
         } finally {
-            // Clear the timeout if the component unmounts or the user switches tabs
-            return () => {
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                }
-            };
+            // Clear the timeout
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+            setIsLoading(false); // Ensure the loading animation is hidden once done
         }
     };
 
@@ -105,7 +110,7 @@ const Home = () => {
         setRoomName("");
     };
 
-    const joinRoom = (roomId) => {
+    const joinRoom = (roomId: string) => {
         setCurrentRoom(roomId);
         setMessages([]);
         socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
@@ -113,8 +118,8 @@ const Home = () => {
         setIsChatVisible(true);
     };
 
-    const fetchMessages = async (roomId) => {
-        const response = await axios.get(`http://localhost:8000/api/chat/rooms/${roomId}/messages`);
+    const fetchMessages = async (roomId: string) => {
+        const response = await axios.get<Message[]>(`${import.meta.env.VITE_API_URL}/api/chat/rooms/${roomId}/messages`);
         setMessages(response.data);
     };
 

@@ -13,17 +13,20 @@ import ChangePassword from "./components/ChangePassword";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import "./App.css";
-import AdminPanel from "../../games/AdminPanel";
+import AdminPanel from "./components/AdminPanel.jsx";
 import Navbar from "./components/Navbar.js";
 import Home from "./components/home.js";
 import Category from "./components/Category.tsx";
 import axios from "axios";
 import { useState } from "react";
+import {AppContentProps} from "./types/tables/appContentProps.ts"
+
+
 
 function App() {
   const [games, setGames] = useState([]);
 
-  const fetchGameByCategory = async (category) => {
+  const fetchGameByCategory = async (category:string) => {
     try {
       const response = await axios.get(
         `http://localhost:8000/api/category/${category}`
@@ -46,7 +49,7 @@ function App() {
   );
 }
 
-function AppContent({ games, fetchGameByCategory }) {
+function AppContent({ games, fetchGameByCategory }:AppContentProps) {
   const location = useLocation();
   const hideNavbarPaths = ["/", "/signup", "/forgot-password", "/reset-password"];
 

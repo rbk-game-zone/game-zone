@@ -157,7 +157,7 @@ module.exports = {
     },
     updateUser: async (req, res) => {
         const { id } = req.params;
-        const { username, email, role, sexe } = req.body;
+        const { username, email, role, sexe, first_name,last_name,age,address} = req.body;
     
         try {
             // Validate required fields
@@ -183,7 +183,11 @@ module.exports = {
             if (email) user.email = email;
             if (role) user.role = role;
             if (sexe) user.sexe = sexe;
-    
+            if (first_name) user.first_name=first_name;
+            if(last_name) user.last_name=last_name;
+            if(age) user.age=age;
+            if (address) user.address=address
+            
             await user.save();
             res.json({ message: "User updated successfully", user });
         } catch (error) {
