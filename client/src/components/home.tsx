@@ -103,11 +103,7 @@ const Home: React.FC = () => {
         let timeoutId;
 
         try {
-            // Set a timeout to hide the loading animation after 15 seconds
-            timeoutId = setTimeout(() => {
-                setIsLoading(false); // Hide loading animation after 15 seconds
-            }, 15000); // 15 seconds in milliseconds
-
+           
             // Unzip the game (this will happen after the delay)
             await axios.post(`${import.meta.env.VITE_API_URL}/api/unzip/${gameId}`);
         } catch (err) {
@@ -123,13 +119,13 @@ const Home: React.FC = () => {
     };
 
     const createRoom = () => {
-        socket.emit("createRoom", { name: roomName, created_by: user.user.id });
+        socket.emit("createRoom", { name: roomName, created_by: user.id });
         setRoomName("");
     };
 
       const joinRoom = (roomId) => {
-        if (user.user.id) {
-            socket.emit("joinRoom", { user_id: user.user.id, room_id: roomId });
+        if (user.id) {
+            socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
             setCurrentRoom(roomId);
             setMessages([]);
             fetchMessages(roomId);
@@ -146,12 +142,12 @@ const Home: React.FC = () => {
 
     const sendMessage = () => {
         if (messageContent.trim() && currentRoom) {
-            socket.emit("sendMessage", { user_id: user.user.id, room_id: currentRoom, content: messageContent });
+            socket.emit("sendMessage", { user_id: user.id, room_id: currentRoom, content: messageContent });
             setMessageContent("");
         }
     };
 console.log("messages",messages);
-console.log("userid",user.user.id);
+console.log("userid",user.id);
 // console.log("roomId",roomId);
 
 
@@ -239,10 +235,10 @@ console.log("userid",user.user.id);
                                         <div 
                                             key={msg.id} 
                                             className="chat-message mb-2" 
-                                            style={{ backgroundColor: msg.user_id === user.user.id ? 'lightgreen' : 'transparent', padding: '5px', borderRadius: '5px' }}
+                                            style={{ backgroundColor: msg.user_id === user.id ? 'lightgreen' : 'transparent', padding: '5px', borderRadius: '5px' }}
                                         >
                                             <strong>
-                                                {msg.user_id === user.user.id ? user.user.username : `Player ${msg.user_id}`}:
+                                                {msg.user_id === user.id ? user.username : `Player ${msg.user_id}`}:
                                             </strong>
                                             <div>
                                                 <span className="text-muted small chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
