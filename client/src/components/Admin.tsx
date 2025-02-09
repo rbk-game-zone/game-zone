@@ -70,7 +70,7 @@ const Admin: React.FC = () => {
                 <div className="card-body">
                     <div className="d-flex justify-content-between align-items-center mb-4">
                         <h2>User Management</h2>
-                        <Link to="/panel" className="btn btn-secondary">Add Game</Link>
+                        <Link to="/panel" className="btn btn-secondary" style={{backgroundColor:'rgba(255, 0, 0, 0.4)'}}>Add Game</Link>
                     </div>
 
                     {/* Search Input */}

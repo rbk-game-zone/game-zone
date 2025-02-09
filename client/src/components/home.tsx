@@ -4,6 +4,7 @@ import axios from "axios";
 import io from "socket.io-client";
 import { FaComments } from "react-icons/fa";
 import { timeAgo } from "../utils/timeUtils";
+import LoadingAnimation from "./LoadingAnimation"; // Import the loading animation
 
 const socket = io("http://localhost:8000");
 
@@ -20,6 +21,7 @@ const Home = () => {
     const [messageContent, setMessageContent] = useState("");
     const [roomName, setRoomName] = useState("");
     const [isChatVisible, setIsChatVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // State for loading animation
     const messagesEndRef = useRef(null);
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -55,11 +57,46 @@ const Home = () => {
         }
     }, [searchQuery, games]);
 
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "hidden") {
+                // If the user switches tabs or minimizes the browser, stop the loading animation
+                setIsLoading(false);
+            }
+        };
+
+        // Add event listener for visibility change
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+        };
+    }, []);
+
     const handleGameClick = async (gameId) => {
+        setIsLoading(true); // Show loading animation
+
+        let timeoutId;
+
         try {
+            // Set a timeout to hide the loading animation after 15 seconds
+            timeoutId = setTimeout(() => {
+                setIsLoading(false); // Hide loading animation after 15 seconds
+            }, 15000); // 15 seconds in milliseconds
+
+            // Unzip the game (this will happen after the delay)
             await axios.post(`http://localhost:8000/api/unzip/${gameId}`);
         } catch (err) {
             alert("Failed to start the game. Please try again later.");
+            setIsLoading(false); // Hide loading animation if there's an error
+        } finally {
+            // Clear the timeout if the component unmounts or the user switches tabs
+            return () => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+            };
         }
     };
 
@@ -90,6 +127,8 @@ const Home = () => {
 
     return (
         <div className="container mt-4">
+            {isLoading && <LoadingAnimation />} {/* Show loading animation when isLoading is true */}
+
             {/* Chat Toggle Button */}
             <button
                 onClick={() => setIsChatVisible(!isChatVisible)}
