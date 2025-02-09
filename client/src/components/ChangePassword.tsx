@@ -9,7 +9,7 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleChangePassword = async (e:any) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       Swal.fire({
@@ -24,7 +24,7 @@ const ChangePassword = () => {
     try {
       const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/user/change-password`,
+        `http://localhost:8000/api/user/change-password`,
         { userId, currentPassword, newPassword },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -40,7 +40,7 @@ const ChangePassword = () => {
         });
         navigate('/profile');
       }
-    } catch (error:any) {
+    } catch (error) {
       console.error('Error changing password:', error);
       Swal.fire({
         title: 'Error!',
@@ -52,40 +52,53 @@ const ChangePassword = () => {
   };
 
   return (
-    <div>
-      <h1>Change Password</h1>
-      <form onSubmit={handleChangePassword}>
-        <div>
-          <label>Current Password:</label>
-          <input
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            required
-          />
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header  text-white text-center">
+              <h3 id='changepassword'>Change Password</h3>
+            </div>
+            <div className="card-body">
+              <form onSubmit={handleChangePassword}>
+                <div className="mb-3">
+                  <label className="form-label">Current Password:</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">New Password:</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Confirm Password:</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary w-100">Change Password</button>
+              </form>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>New Password:</label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Confirm Password:</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Change Password</button>
-      </form>
+      </div>
     </div>
   );
 };
 
-export default ChangePassword; 
+export default ChangePassword;

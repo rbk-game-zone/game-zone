@@ -4,17 +4,15 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { updateUser } from '../store/authSlice';
-import ChangePassword from './ChangePassword';
+import { RootState } from '../store/store';
+
 
 const Profile = () => {
-  console.log("Retrieving user data:", localStorage.getItem('user'));
-  const user = JSON.parse(localStorage.getItem('user') || 'null') || useSelector((state) => state.auth.user);
-  console.log("Parsed user data:", user);
-  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+  const user = storedUser || useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
-  const [users, setUser] = useState(user);
   const [profileData, setProfileData] = useState({
     username: user?.username || '',
     email: user?.email || '',
@@ -23,65 +21,48 @@ const Profile = () => {
     address: user?.address || '',
     firstname: user?.first_name || '',
     lastname: user?.last_name || '',
-    age: user?.age || ''
+    age: user?.age || '',
+    avatar: user?.avatar || '' // Add avatar field
   });
-
-  // Debug logging
-  console.log('User data in Profile:', user);
-  console.log('CreatedAt value:', user?.createdAt);
-
-  // Use useEffect to handle navigation
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     navigate('/login');
-  //   }
-  // }, [isAuthenticated, navigate]);
-
-  // if (!isAuthenticated) {
-  //   return null; // Return null if not authenticated
-  // }
-
-  // Format the date
-  const formatDate = (dateString:string) => {
-    console.log('Formatting date string:', dateString);
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const handleChangePassword = async () => {
-    try {
-      const response = await axios.post(
-        `http://localhost:8000/api/user/forgot-password`,
-        { email: user.email }
-      );
-
-      if (response.data.success) {
-        Swal.fire({
-          title: 'Success!',
-          text: 'Password reset link has been sent to your email.',
-          icon: 'success',
-          confirmButtonText: 'OK',
-        });
-      }
-    } catch (error :any) {
-      console.error('Error sending password reset email:', error);
-      Swal.fire({
-        title: 'Error!',
-        text: error.response?.data?.message || 'Failed to send password reset email.',
-        icon: 'error',
-        confirmButtonText: 'OK',
-      });
+  
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const storedAvatar = localStorage.getItem('avatar'); // Fetch stored avatar
+    if (storedUser) {
+      setProfileData((prevData) => ({
+        ...prevData,
+        username: storedUser.username || '',
+        email: storedUser.email || '',
+        sexe: storedUser.sexe || '',
+        role: storedUser.role || '',
+        address: storedUser.address || '',
+        firstname: storedUser.first_name || '',
+        lastname: storedUser.last_name || '',
+        age: storedUser.age || '',
+      }));
+      setAvatarPreview(storedAvatar || ''); // Ensure preview stays correct
     }
+  }, []); 
+
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '');  // Avatar preview state
+
+  const availableAvatars = [
+    'https://th.bing.com/th/id/OIP.BZDN5jtCETHvCmYtgEV8eAHaHa?w=184&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+    'https://cdn-icons-png.flaticon.com/128/528/528111.png',
+    'avatar3.png',
+    'avatar4.png',
+    'avatar5.png',
+    'avatar6.png',
+  ];
+
+  const handleAvatarSelect = (avatar: string) => {
+    setAvatarPreview(avatar); // Update preview
+    localStorage.setItem('avatar', avatar); // ✅ Store avatar separately in localStorage
   };
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log('Updating profile with data:', profileData);
       const response = await axios.put(
         `http://localhost:8000/api/user/users/${user.id}`,
         profileData,
@@ -91,7 +72,6 @@ const Profile = () => {
       );
 
       const updatedUser = response.data.user;
-      setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
       dispatch(updateUser(updatedUser));
 
@@ -101,7 +81,7 @@ const Profile = () => {
         text: 'Your profile has been successfully updated.',
       });
       setEditMode(false);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error updating profile:', error);
       Swal.fire({
         icon: 'error',
@@ -112,105 +92,107 @@ const Profile = () => {
   };
 
   return (
-    <div>
-      <div className="profile-container">
-        <h1 className="profile-title">Profile Dashboard</h1>  
-        <div className="profile-content">
-          <div className="profile-card">
-            <div className="profile-header">
-              <h2 className="profile-name">{user?.firstname} {user?.lastname}</h2>
-              <p className="profile-role">{user?.role}</p>
-              <p className="profile-email">{user?.email}</p>
-              <p className="profile-sexe">{user?.sexe}</p>
-              <p className="profile-address">{user?.address}</p>
-            </div>
-            
-            <div className="profile-details">
-              {editMode ? (
-                <>
-                  <div className="profile-field">
-                    <label>First Name:</label>
-                    <input
-                      type="text"
-                      value={profileData.firstname}
-                      onChange={(e) => setProfileData({...profileData, firstname: e.target.value})}
-                    />
-                  </div>
-                  <div className="profile-field">
-                    <label>Last Name:</label>
-                    <input
-                      type="text"
-                      value={profileData.lastname}
-                      onChange={(e) => setProfileData({...profileData, lastname: e.target.value})}
-                    />
-                  </div>
-                  <div className="profile-field">
-                    <label>Username:</label>
-                    <input
-                      type="text"
-                      value={profileData.username}
-                      onChange={(e) => setProfileData({...profileData, username: e.target.value})}
-                    />
-                  </div>
-                  <div className="profile-field">
-                    <label>Email:</label>
-                    <input
-                      type="email"
-                      value={profileData.email}
-                      onChange={(e) => setProfileData({...profileData, email: e.target.value})}
-                    />
-                  </div>
-                  {/* Role update input removed from user's own profile */}
-                </>
-              ) : (
-                <>
-                  <div className="detail-item">
-                    <span className="detail-label">First Name</span>
-                    <span className="detail-value">{user?.first_name}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Last Name</span>
-                    <span className="detail-value">{user?.last_name}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Email</span>
-                    <span className="detail-value">{user?.email}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Role</span>
-                    <span className="detail-value">{user?.role}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Sexe</span>
-                    <span className="detail-value">{user?.sexe}</span>
-                  </div>
-                </>
-              )}
-            </div>
+    <div className="container mt-5">
+      <h1 className="text-center">Profile Dashboard</h1>
+      <div className="card shadow-lg p-4">
+        <div className="card-header d-flex justify-content-between align-items-center">
+          <div className="avatar-container">
+            <img
+              src={avatarPreview || 'default-avatar.png'} 
+              alt="Avatar"
+              className="avatar-img rounded-circle"
+              width="100"
+              height="100"
+            />
           </div>
+          <div className="profile-name">{user?.username}</div>
+        </div>
 
-          <div className="profile-actions">
-            {editMode ? (
-              <>
-                <button className="profile-button save-button" onClick={handleUpdate}>
-                  Save Changes
-                </button>
-                <button className="profile-button cancel-button" onClick={() => setEditMode(false)}>
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button className="profile-button edit-button" onClick={() => setEditMode(true)}>
-                Edit Profile
-              </button>
-            )}
-            <button 
-              className="profile-button change-password-button" 
-              onClick={() => navigate('/change-password')}
-            >
-              Change Password
-            </button>
-          </div>
+        <div className="card-body">
+          {editMode ? (
+            <>
+              <div className="mb-3">
+                <label className="form-label">Choose Avatar:</label>
+                <div className="d-flex gap-2">
+                  {availableAvatars.map((avatarr, index) => (
+                    <div
+                      key={index}
+                      className={`avatar-option cursor-pointer ${avatarPreview === avatarr ? 'border-primary' : ''}`}
+                      onClick={() => handleAvatarSelect(avatarr)}
+                    >
+                      <img
+                        src={avatarr} 
+                        alt="Avatar"
+                        className="avatar-img rounded-circle"
+                        width="40"
+                        height="40"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">First Name:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={profileData.firstname}
+                  onChange={(e) => setProfileData({ ...profileData, firstname: e.target.value })}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Last Name:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={profileData.lastname}
+                  onChange={(e) => setProfileData({ ...profileData, lastname: e.target.value })}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Email:</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  value={profileData.email}
+                  onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-3">
+                <strong>First Name:</strong> {user?.first_name}
+              </div>
+              <div className="mb-3">
+                <strong>Last Name:</strong> {user?.last_name}
+              </div>
+              <div className="mb-3">
+                <strong>Email:</strong> {user?.email}
+              </div>
+              <div className="mb-3">
+                <strong>Role:</strong> {user?.role}
+              </div>
+              <div className="mb-3">
+                <strong>Sexe:</strong> {user?.sexe}
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="card-footer d-flex justify-content-between">
+          {editMode ? (
+            <>
+              <button className="btn btn-primary" onClick={handleUpdate}>Save Changes</button>
+              <button className="btn   text-white btn-secondary" onClick={() => setEditMode(false)}>Cancel</button>
+            </>
+          ) : (
+            <button className="btn btn-primary" onClick={() => setEditMode(true)}>Edit Profile</button>
+          )}
+          <button className="btn text-white btn-info" onClick={() => navigate('/change-password')} style={{backgroundColor:'rgba(255, 0, 0, 0.4)'}}>Change Password</button>
         </div>
       </div>
     </div>
