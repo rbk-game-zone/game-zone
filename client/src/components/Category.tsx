@@ -4,7 +4,7 @@ import axios from 'axios';
 const Category = ({ games }: { games: any }) => {
     const [searchQuery, setSearchQuery] = useState(""); // State for search query
     const [filteredGames, setFilteredGames] = useState(games);
-
+  console.log(games,"gamesss")
     useEffect(() => {
         // Filter games based on search query
         if (searchQuery) {
@@ -22,6 +22,7 @@ const Category = ({ games }: { games: any }) => {
             alert("Failed to start the game. Please try again later.");
         }
     };
+   
 
     return (
         <div className="container mt-4">

@@ -24,6 +24,7 @@ function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
     };
     fetchCategories();
   }, []);
+ 
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -82,6 +83,8 @@ function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
                         {category.name}
                       </Link>
                     </li>
+                    
+                    
                   ))}
                 </ul>
               </li>

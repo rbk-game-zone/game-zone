@@ -21,7 +21,7 @@ const Login: React.FC = () => {
             if (user.role === 'admin') {
                 navigate('/admin');
             } else {
-                navigate('/');
+                navigate('/home');
             }
         } catch (error) {
             alert('Login failed. Please check your credentials.');

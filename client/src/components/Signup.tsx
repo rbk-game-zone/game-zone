@@ -49,7 +49,7 @@ const Signup: React.FC = () => {
 
         try {
             await dispatch(registerUser(formData)).unwrap();
-            navigate('/login');
+            navigate('/');
         } catch (error) {
             alert('Registration failed. Please try again.');
         }

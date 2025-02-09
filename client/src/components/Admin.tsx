@@ -60,6 +60,11 @@ const Admin: React.FC = () => {
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.role.toLowerCase().includes(searchQuery.toLowerCase())
     );
+    const addCategory= (body:any)=>{
+        axios.post("http://localhost:8000/api/categories",body)
+        .then(()=>{console.log("category added")})
+        .catch((err)=>{console.log("adding category error",err)})   
+      }
 
     return (
         <div className="container mt-5">

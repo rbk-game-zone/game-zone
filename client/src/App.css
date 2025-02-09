@@ -274,3 +274,16 @@ button {
     color: white;
     margin-top: 10px;
 }
+/* styles.css */
+.table, .table th, .table td {
+    background-color: rgba(28, 28, 28, 0.5) !important;
+    color: white !important;
+}
+
+.table th {
+    text-align: center;
+}
+
+.table td {
+    text-align: left;
+}
