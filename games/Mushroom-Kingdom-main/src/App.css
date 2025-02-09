@@ -1,0 +1,41 @@
+body {
+   margin: 0;
+   overflow: hidden;
+   /* Optional: Prevent overscroll effects on iOS */
+   -webkit-overflow-scrolling: touch;
+   overscroll-behavior: none;
+}
+
+#pingStats {
+   position: absolute;
+   top: 60px;
+   left: 4px;
+   width: 400px;
+   height: 400px;
+   pointer-events: none;
+   color: white;
+   font-family: monospace;
+}
+
+@media (min-width: 1224px) {
+   #joystickWrapper1 {
+      display: none;
+   }
+}
+
+.nipple.collection_0 .back {
+   background-color: rgba(0, 50, 0, 1d) !important;
+   border: 2px solid darkgreen !important;
+   border-radius: 50% !important;
+}
+
+@keyframes pulse {
+   0% {
+      transform: scale(1);
+   }
+   100% {
+      transform: scale(1.1);
+      background-color: rgba(255, 0, 0, 0.5);
+      border-color: darkred;
+   }
+}

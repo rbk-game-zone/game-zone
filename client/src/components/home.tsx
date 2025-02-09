@@ -131,7 +131,7 @@ const Home: React.FC = () => {
             fetchMessages(roomId);
             setIsChatVisible(true);
         } else {
-            console.error("User ID is not defined.");
+            console.error("Useruser.user ID is not defined.");
         }
     };
 
@@ -146,9 +146,7 @@ const Home: React.FC = () => {
             setMessageContent("");
         }
     };
-console.log("messages",messages);
-console.log("userid",user.id);
-// console.log("roomId",roomId);
+
 
 
 
@@ -229,21 +227,22 @@ console.log("userid",user.id);
                         </select>
                         {currentRoom && (
                             <div className="chat-messages-container mt-4">
-                                <h2 className="chat-messages-header">Messages</h2>
+                                <h2 className="chat-messages-header">{`Messages`}</h2>
                                 <div className="chat-box p-3 border rounded" style={{ height: "300px", overflowY: "scroll", backgroundColor: "gray" }}>
                                     {messages.map((msg) => (
                                         <div 
                                             key={msg.id} 
                                             className="chat-message mb-2" 
-                                            style={{ backgroundColor: msg.user_id === user.id ? 'lightgreen' : 'transparent', padding: '5px', borderRadius: '5px' }}
+                                            style={{ backgroundColor: msg.user_id === user.id ? 'lightblue' : 'transparent', padding: '5px', borderRadius: '5px' }}
                                         >
                                             <strong>
-                                                {msg.user_id === user.id ? user.username : `Player ${msg.user_id}`}:
+                                                {msg.user_id === user.id ? user.username : `Player ${msg.user_id} `} :
+                                                {` ${msg.content}`}
                                             </strong>
                                             <div>
                                                 <span className="text-muted small chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
                                             </div>
-                                            <div>{` ${msg.content}`}</div>
+                                            <div></div>
                                         </div>
                                     ))}
                                     <div ref={messagesEndRef} />

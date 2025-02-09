@@ -20,7 +20,7 @@ function scorefinal() {
     <div style={{color:"red"}} className="score-section">
     <h1>Ranked Scores</h1>
     {rankedScores.map((game) => (
-        <div key={game.game}>
+        <div key={game.id}>
             <h2>{game.game}</h2>
             <ul>
                 {game.scores.map((score) => (
