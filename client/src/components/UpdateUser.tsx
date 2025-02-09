@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { User } from "../types/tables/user"
+import { UpdateUserProps} from "../types/tables/UpdateUser"
 
-interface User {
-    id: number;
-    username: string;
-    email: string;
-    role: string;
-    sexe: string;
-}
 
-interface UpdateUserProps {
-    user: User;
-    onUpdate: (updatedUser: User) => void;
-}
 
 const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
     const [formData, setFormData] = useState<User>(user);
@@ -34,7 +25,7 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
             }
 
             const response = await axios.put(
-                `http://localhost:8000/api/user/users/${user.id}`,
+                `${import.meta.env.VITE_API_URL}/api/user/users/${user.id}`,
                 formData,
                 {
                     headers: {
@@ -42,6 +33,7 @@ const UpdateUser: React.FC<UpdateUserProps> = ({ user, onUpdate }) => {
                     },
                 }
             );
+            
             onUpdate(response.data.user);
         } catch (error) {
             console.error('Error updating user:', error);

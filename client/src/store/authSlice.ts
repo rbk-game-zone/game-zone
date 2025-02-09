@@ -1,25 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { User } from '../types/tables/user';
-// interface User {
-//     id: number;
-//     username: string;
-//     email: string;
-//     first_name: string;
-//     last_name: string;
-//     age: number;
-//     address: string;
-//     sexe: 'male' | 'female' | 'other';
-//     role: 'admin' | 'player';
-// }
+import { AuthState } from "../types/tables/Authstate"
 
-interface AuthState {
-    user: User | null;
-    status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
-    token: string | null;
-    isAuthenticated: boolean;
-}
+const API_URL = import.meta.env.VITE_API_URL;
+
 const initialState: AuthState = {
     user: JSON.parse(localStorage.getItem("user") as string) as User  || null, // Initialize user as null
     status: 'idle',
@@ -29,20 +14,27 @@ const initialState: AuthState = {
 };
 
 export const loginUser = createAsyncThunk(
-    'auth/login',
-    async ({ email, username, password,role,first_name,last_name,age,address,sexe }: { email: string, username: string, password: string,role:string,first_name:string,last_name:string,age:number,address:string,sexe:string }) => {
-        const response = await axios.post('http://localhost:8000/api/user/login', { email, username, password,role,first_name,last_name,age,address,sexe });
-        return response.data;
+    'auth/loginUser',
+    async ({ email, username, password }: { email: string; username: string; password: string }, thunkAPI) => {
+        try {
+            const response = await axios.post(`${API_URL}/api/user/login`, { email, username, password });
+            return response.data;
+        } catch (error:any) {
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
     }
-
-);
+);;
 
 export const registerUser = createAsyncThunk(
     'auth/register',
-    async (userData: object) => {
-        const response = await axios.post('http://localhost:8000/api/user/register', userData);
-        console.log(response.data);
-        return response.data;
+    async (userData: object,thunkAPI) => {
+        try{
+            const response = await axios.post(`${API_URL}/api/user/register`, userData);
+            console.log(response.data);
+            return response.data;
+        }catch(error:any){
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
     }
 );
 
@@ -57,6 +49,7 @@ const authSlice = createSlice({
             }
         },
         updateUser: (state, action) => {
+            console.log("Updating user in Redux:", action.payload); // Debugging log
             state.user = action.payload;
             localStorage.setItem('user', JSON.stringify(action.payload));
             state.isAuthenticated = true;

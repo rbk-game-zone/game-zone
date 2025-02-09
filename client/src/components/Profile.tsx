@@ -6,28 +6,30 @@ import Swal from 'sweetalert2';
 import { updateUser } from '../store/authSlice';
 import { RootState } from '../store/store';
 
-
 const Profile = () => {
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   const user = storedUser || useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
+
   const [profileData, setProfileData] = useState({
     username: user?.username || '',
     email: user?.email || '',
     sexe: user?.sexe || '',
     role: user?.role || '',
     address: user?.address || '',
-    firstname: user?.first_name || '',
-    lastname: user?.last_name || '',
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
     age: user?.age || '',
-    avatar: user?.avatar || '' // Add avatar field
+    avatar: user?.avatar || '' 
   });
-  
+
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || ''); 
+
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-    const storedAvatar = localStorage.getItem('avatar'); // Fetch stored avatar
+    const storedAvatar = localStorage.getItem('avatar');
     if (storedUser) {
       setProfileData((prevData) => ({
         ...prevData,
@@ -36,35 +38,36 @@ const Profile = () => {
         sexe: storedUser.sexe || '',
         role: storedUser.role || '',
         address: storedUser.address || '',
-        firstname: storedUser.first_name || '',
-        lastname: storedUser.last_name || '',
+        first_name: storedUser.first_name || '',
+        last_name: storedUser.last_name || '',
         age: storedUser.age || '',
       }));
-      setAvatarPreview(storedAvatar || ''); // Ensure preview stays correct
+      setAvatarPreview(storedAvatar || '');
     }
   }, []); 
-
-  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '');  // Avatar preview state
 
   const availableAvatars = [
     'https://th.bing.com/th/id/OIP.BZDN5jtCETHvCmYtgEV8eAHaHa?w=184&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7',
     'https://cdn-icons-png.flaticon.com/128/528/528111.png',
-    'avatar3.png',
-    'avatar4.png',
-    'avatar5.png',
-    'avatar6.png',
+    'https://cdn-icons-png.flaticon.com/128/705/705890.png',
+    'https://cdn-icons-png.flaticon.com/128/1985/1985782.png',
+    'https://cdn-icons-png.flaticon.com/128/2277/2277366.png',
+    'https://cdn-icons-png.flaticon.com/128/705/705788.png',
   ];
 
   const handleAvatarSelect = (avatar: string) => {
-    setAvatarPreview(avatar); // Update preview
-    localStorage.setItem('avatar', avatar); // ✅ Store avatar separately in localStorage
+    setAvatarPreview(avatar);
+    setProfileData((prevData) => ({ ...prevData, avatar }));
+    localStorage.setItem('avatar', avatar);
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     try {
+      const apiUrl = import.meta.env.VITE_API_URL;
       const response = await axios.put(
-        `http://localhost:8000/api/user/users/${user.id}`,
+        `${apiUrl}/api/user/users/${user.id}`,
         profileData,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -114,14 +117,14 @@ const Profile = () => {
               <div className="mb-3">
                 <label className="form-label">Choose Avatar:</label>
                 <div className="d-flex gap-2">
-                  {availableAvatars.map((avatarr, index) => (
+                  {availableAvatars.map((avatar, index) => (
                     <div
                       key={index}
-                      className={`avatar-option cursor-pointer ${avatarPreview === avatarr ? 'border-primary' : ''}`}
-                      onClick={() => handleAvatarSelect(avatarr)}
+                      className={`avatar-option cursor-pointer ${avatarPreview === avatar ? 'border-primary' : ''}`}
+                      onClick={() => handleAvatarSelect(avatar)}
                     >
                       <img
-                        src={avatarr} 
+                        src={avatar} 
                         alt="Avatar"
                         className="avatar-img rounded-circle"
                         width="40"
@@ -137,8 +140,8 @@ const Profile = () => {
                 <input
                   type="text"
                   className="form-control"
-                  value={profileData.firstname}
-                  onChange={(e) => setProfileData({ ...profileData, firstname: e.target.value })}
+                  value={profileData.first_name}
+                  onChange={(e) => setProfileData({ ...profileData, first_name: e.target.value })}
                 />
               </div>
 
@@ -147,8 +150,8 @@ const Profile = () => {
                 <input
                   type="text"
                   className="form-control"
-                  value={profileData.lastname}
-                  onChange={(e) => setProfileData({ ...profileData, lastname: e.target.value })}
+                  value={profileData.last_name}
+                  onChange={(e) => setProfileData({ ...profileData, last_name: e.target.value })}
                 />
               </div>
 
@@ -161,24 +164,36 @@ const Profile = () => {
                   onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
                 />
               </div>
+
+              <div className="mb-3">
+                <label className="form-label">Age:</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={profileData.age}
+                  onChange={(e) => setProfileData({ ...profileData, age: e.target.value })}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Address:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={profileData.address}
+                  onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
+                />
+              </div>
             </>
           ) : (
             <>
-              <div className="mb-3">
-                <strong>First Name:</strong> {user?.first_name}
-              </div>
-              <div className="mb-3">
-                <strong>Last Name:</strong> {user?.last_name}
-              </div>
-              <div className="mb-3">
-                <strong>Email:</strong> {user?.email}
-              </div>
-              <div className="mb-3">
-                <strong>Role:</strong> {user?.role}
-              </div>
-              <div className="mb-3">
-                <strong>Sexe:</strong> {user?.sexe}
-              </div>
+              <div className="mb-3"><strong>First Name:</strong> {user?.first_name}</div>
+              <div className="mb-3"><strong>Last Name:</strong> {user?.last_name}</div>
+              <div className="mb-3"><strong>Email:</strong> {user?.email}</div>
+              <div className="mb-3"><strong>Age:</strong> {user?.age}</div>
+              <div className="mb-3"><strong>Address:</strong> {user?.address}</div>
+              <div className="mb-3"><strong>Role:</strong> {user?.role}</div>
+              <div className="mb-3"><strong>Sexe:</strong> {user?.sexe}</div>
             </>
           )}
         </div>
@@ -187,7 +202,7 @@ const Profile = () => {
           {editMode ? (
             <>
               <button className="btn btn-primary" onClick={handleUpdate}>Save Changes</button>
-              <button className="btn   text-white btn-secondary" onClick={() => setEditMode(false)}>Cancel</button>
+              <button className="btn text-white btn-secondary" onClick={() => setEditMode(false)}>Cancel</button>
             </>
           ) : (
             <button className="btn btn-primary" onClick={() => setEditMode(true)}>Edit Profile</button>
