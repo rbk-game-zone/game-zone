@@ -7,11 +7,14 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
+  // Dynamically use the VITE_API_URL from .env
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/user/forgot-password`,
+        `${API_URL}/api/user/forgot-password`, // Use dynamic API URL here
         { email }
       );
 
@@ -22,7 +25,7 @@ const ForgotPassword = () => {
           icon: 'success',
           confirmButtonText: 'OK',
         });
-        navigate('/login');
+        navigate('/');
       }
     } catch (error: any) {
       console.error('Error sending password reset email:', error);

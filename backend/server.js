@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 const app = express();
 const server = http.createServer(app);
 const jwt = require('jsonwebtoken');
-const userRoute = require('./router/user.router');
+const userRoute = require('./routes/user.router');
 const gameRoute = require('./routes/gameRoutes');
 const path = require('path');
 

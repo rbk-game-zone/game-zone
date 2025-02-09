@@ -3,16 +3,17 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Loading state
   const navigate = useNavigate();
 
   const handleResetPassword = async (e: any) => {
     e.preventDefault();
+
     if (newPassword !== confirmPassword) {
       Swal.fire({
         title: 'Error!',
@@ -23,9 +24,21 @@ const ResetPassword = () => {
       return;
     }
 
+    if (newPassword.length < 8) { // Password length check (basic validation)
+      Swal.fire({
+        title: 'Error!',
+        text: 'Password must be at least 8 characters long.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
     try {
+      setIsLoading(true); // Start loading state
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Use environment variable
       const response = await axios.post(
-        `http://localhost:8000/api/user/reset-password`,
+        `${apiUrl}/api/user/reset-password`,
         { token, newPassword }
       );
 
@@ -36,7 +49,7 @@ const ResetPassword = () => {
           icon: 'success',
           confirmButtonText: 'OK',
         });
-        navigate('/login');
+        navigate('/');
       }
     } catch (error: any) {
       console.error('Error resetting password:', error);
@@ -46,6 +59,8 @@ const ResetPassword = () => {
         icon: 'error',
         confirmButtonText: 'OK',
       });
+    } finally {
+      setIsLoading(false); // End loading state
     }
   };
 
@@ -78,7 +93,13 @@ const ResetPassword = () => {
                   required
                 />
               </div>
-              <button type="submit" className="btn btn-primary w-100">Reset Password</button>
+              <button
+                type="submit"
+                className="btn btn-primary w-100"
+                disabled={isLoading} // Disable button while loading
+              >
+                {isLoading ? 'Resetting...' : 'Reset Password'}
+              </button>
             </form>
           </div>
         </div>
