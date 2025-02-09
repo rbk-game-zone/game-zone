@@ -3,12 +3,12 @@ import axios from 'axios';
 
 const Leaderboard: React.FC<{ gameId: number }> = ({ gameId }) => {
     const [leaderboard, setLeaderboard] = useState([]);
-
+    const API_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
                 console.log("Fetching leaderboard for gameId:", gameId);
-                const response = await axios.get(`http://localhost:8000/api/scores/${gameId}/leaderboard`);
+                const response = await axios.get(`${API_URL}/api/scores/${gameId}/leaderboard`);
                 setLeaderboard(response.data);
             } catch (error) {
                 console.error('Error fetching leaderboard:', error);

@@ -14,7 +14,7 @@ function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000"; // Use env variable or default to localhost
+        const apiUrl = import.meta.env.VITE_API_URL ; // Use env variable or default to localhost
         const response = await axios.get(`${apiUrl}/api/categories`);
         setCategories(response.data);
       } catch (error) {
