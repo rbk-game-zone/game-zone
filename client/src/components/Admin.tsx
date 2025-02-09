@@ -60,6 +60,18 @@ const Admin: React.FC = () => {
         setSearchQuery(e.target.value);
     };
 
+    const addCategory = () => {
+        axios.post(`${API_URL}/api/categories`, { name: categoryName })
+            .then(() => {
+                alert("Category added");
+                setCategoryName('');
+                setShowCategoryForm(false);
+            })
+            .catch((err) => {
+                console.log("Adding category error", err);
+            });
+    };
+
     const filteredUsers = users.filter((user) =>
         user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -95,7 +107,7 @@ const Admin: React.FC = () => {
                                 value={categoryName}
                                 onChange={(e) => setCategoryName(e.target.value)}
                             />
-                            <button className="btn btn-secondary me-2">Add</button>
+                            <button className="btn btn-success me-2" onClick={addCategory}>Add</button>
                             <button className="btn btn-warning" onClick={() => setShowCategoryForm(false)}>Cancel</button>
                         </div>
                     ) : (
