@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import { FaComments } from "react-icons/fa";
 import { timeAgo } from "../utils/timeUtils";
 import LoadingAnimation from "./LoadingAnimation"; // Import the loading animation
+import VoiceChat from './VoiceChat';
 
 const socket = io("http://localhost:8000");
 
@@ -23,8 +24,10 @@ const Home = () => {
     const [isChatVisible, setIsChatVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false); // State for loading animation
     const messagesEndRef = useRef(null);
+    const [isVoiceChatVisible, setIsVoiceChatVisible] = useState(false);
+
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const { setGameId } = useGameContext();
+    // const { setGameId } = useGameContext();
 
     // Load notification sound
     const notificationSound = new Audio('/notification-7-270142.mp3'); // Ensure this path is correct
@@ -42,8 +45,15 @@ const Home = () => {
             }
         };
         fetchGames();
-
-        socket.on("newMessage", (message) => setMessages((prev) => [...prev, message]));
+        const fetchRooms = async () => {
+            const response = await axios.get("http://localhost:8000/api/chat/rooms");
+            setRooms(response.data);
+        };
+        fetchRooms();
+        socket.on("newMessage", (message) => {
+            setMessages((prev) => [...prev, message]);
+            notificationSound.play(); // Play notification sound on new message
+        });
         socket.on("roomCreated", (room) => setRooms((prev) => [...prev, room]));
 
         return () => {
@@ -51,6 +61,12 @@ const Home = () => {
             socket.off("roomCreated");
         };
     }, []);
+
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
 
     useEffect(() => {
         if (searchQuery) {
@@ -105,13 +121,13 @@ const Home = () => {
     };
 
     const createRoom = () => {
-        socket.emit("createRoom", { name: roomName, created_by: user.id });
+        socket.emit("createRoom", { name: roomName, created_by: user.user.id });
         setRoomName("");
     };
 
-    const joinRoom = (roomId) => {
-        if (user.id) {
-            socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
+      const joinRoom = (roomId) => {
+        if (user.user.id) {
+            socket.emit("joinRoom", { user_id: user.user.id, room_id: roomId });
             setCurrentRoom(roomId);
             setMessages([]);
             fetchMessages(roomId);
@@ -128,10 +144,15 @@ const Home = () => {
 
     const sendMessage = () => {
         if (messageContent.trim() && currentRoom) {
-            socket.emit("sendMessage", { user_id: user.id, room_id: currentRoom, content: messageContent });
+            socket.emit("sendMessage", { user_id: user.user.id, room_id: currentRoom, content: messageContent });
             setMessageContent("");
         }
     };
+console.log("messages",messages);
+console.log("userid",user.user.id);
+// console.log("roomId",roomId);
+
+
 
     return (
         <div className="container mt-4">
@@ -213,11 +234,21 @@ const Home = () => {
                                 <h2 className="chat-messages-header">Messages</h2>
                                 <div className="chat-box p-3 border rounded" style={{ height: "300px", overflowY: "scroll", backgroundColor: "gray" }}>
                                     {messages.map((msg) => (
-                                        <div key={msg.id} className="chat-message mb-2">
-                                            <strong>{msg.User?.username || user.username}:</strong> {msg.content}
-                                            <span className="text-muted small ms-2 chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
+                                        <div 
+                                            key={msg.id} 
+                                            className="chat-message mb-2" 
+                                            style={{ backgroundColor: msg.user_id === user.user.id ? 'lightgreen' : 'transparent', padding: '5px', borderRadius: '5px' }}
+                                        >
+                                            <strong>
+                                                {msg.user_id === user.user.id ? user.user.username : `Player ${msg.user_id}`}:
+                                            </strong>
+                                            <div>
+                                                <span className="text-muted small chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
+                                            </div>
+                                            <div>{` ${msg.content}`}</div>
                                         </div>
                                     ))}
+                                    <div ref={messagesEndRef} />
                                 </div>
                                 <div className="chat-input-container mt-3">
                                     <input
@@ -225,11 +256,23 @@ const Home = () => {
                                         className="form-control chat-input"
                                         value={messageContent}
                                         onChange={(e) => setMessageContent(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                sendMessage(); // Call sendMessage when Enter is pressed
+                                            }
+                                        }}
                                         placeholder="Type a message..."
                                     />
                                     <button className="btn btn-primary mt-2 chat-send-btn" onClick={sendMessage}>Send</button>
+                                    
                                 </div>
+                                <button onClick={() => setIsVoiceChatVisible(!isVoiceChatVisible)}>
+                            {isVoiceChatVisible ? "Stop Voice Chat" : "Start Voice Chat"}
+                        </button>
+                        <VoiceChat roomId={currentRoom} />
+
                             </div>
+                            
                         )}
                     </div>
                 )}

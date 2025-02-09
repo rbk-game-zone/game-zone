@@ -107,7 +107,7 @@ module.exports = {
             }
     
             // Execute npm install in the game directory
-            exec(`cd "${gameDir}" && npm install`, (error, stdout, stderr) => {
+            exec(`cd "${gameDir}" && npm install --force`, (error, stdout, stderr) => {
                 if (error) {
                     console.error(`Error executing npm install: ${error.message}`);
                     return res.status(500).json({ message: "Error during npm install", error: error.message });
