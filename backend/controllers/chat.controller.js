@@ -52,5 +52,21 @@ module.exports = {
             console.error('Error fetching messages:', error);
             res.status(500).json({ message: "Error fetching messages", error: error.message });
         }
+    },
+
+    postMessage: async (req, res) => {
+        try {
+            const { room_id, user_id, content } = req.body;
+            const newMessage = await db.Message.create({ room_id, user_id, content });
+
+            const messageWithUser = await db.Message.findOne({
+                where: { id: newMessage.id },
+                include: [{ model: db.User, attributes: ["username"] }],
+            });
+
+            res.status(201).json(messageWithUser);
+        } catch (error) {
+            res.status(500).json({ error: "Failed to post message", details: error.message });
+        }
     }
 }; 

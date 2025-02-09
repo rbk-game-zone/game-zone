@@ -10,6 +10,7 @@ import {Room} from "../types/tables/room"
 import {Message} from "../types/tables/message"
 import { User } from "../types/tables/user"
 
+import VoiceChat from './VoiceChat';
 
 
 
@@ -30,6 +31,9 @@ const Home: React.FC = () => {
     const [isChatVisible, setIsChatVisible] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false); // State for loading animation
     const user: User = JSON.parse(localStorage.getItem("user") || "{}");
+    const [isVoiceChatVisible, setIsVoiceChatVisible] = useState(false);
+    const notificationSound = new Audio('/notification-7-270142.mp3'); // Ensure this path is correct
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         const fetchGames = async () => {
@@ -44,15 +48,28 @@ const Home: React.FC = () => {
             }
         };
         fetchGames();
-
-        socket.on("newMessage", (message: Message) => setMessages((prev) => [...prev, message]));
-        socket.on("roomCreated", (room: Room) => setRooms((prev) => [...prev, room]));
+        const fetchRooms = async () => {
+            const response = await axios.get("http://localhost:8000/api/chat/rooms");
+            setRooms(response.data);
+        };
+        fetchRooms();
+        socket.on("newMessage", (message) => {
+            setMessages((prev) => [...prev, message]);
+            notificationSound.play(); // Play notification sound on new message
+        });
+        socket.on("roomCreated", (room) => setRooms((prev) => [...prev, room]));
 
         return () => {
             socket.off("newMessage");
             socket.off("roomCreated");
         };
     }, []);
+
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
 
     useEffect(() => {
         if (searchQuery) {
@@ -86,11 +103,7 @@ const Home: React.FC = () => {
         let timeoutId;
 
         try {
-            // Set a timeout to hide the loading animation after 15 seconds
-            timeoutId = setTimeout(() => {
-                setIsLoading(false); // Hide loading animation after 15 seconds
-            }, 15000); // 15 seconds in milliseconds
-
+           
             // Unzip the game (this will happen after the delay)
             await axios.post(`${import.meta.env.VITE_API_URL}/api/unzip/${gameId}`);
         } catch (err) {
@@ -110,12 +123,16 @@ const Home: React.FC = () => {
         setRoomName("");
     };
 
-    const joinRoom = (roomId: string) => {
-        setCurrentRoom(roomId);
-        setMessages([]);
-        socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
-        fetchMessages(roomId);
-        setIsChatVisible(true);
+      const joinRoom = (roomId) => {
+        if (user.id) {
+            socket.emit("joinRoom", { user_id: user.id, room_id: roomId });
+            setCurrentRoom(roomId);
+            setMessages([]);
+            fetchMessages(roomId);
+            setIsChatVisible(true);
+        } else {
+            console.error("User ID is not defined.");
+        }
     };
 
     const fetchMessages = async (roomId: string) => {
@@ -129,6 +146,11 @@ const Home: React.FC = () => {
             setMessageContent("");
         }
     };
+console.log("messages",messages);
+console.log("userid",user.id);
+// console.log("roomId",roomId);
+
+
 
     return (
         <div className="container mt-4">
@@ -210,11 +232,21 @@ const Home: React.FC = () => {
                                 <h2 className="chat-messages-header">Messages</h2>
                                 <div className="chat-box p-3 border rounded" style={{ height: "300px", overflowY: "scroll", backgroundColor: "gray" }}>
                                     {messages.map((msg) => (
-                                        <div key={msg.id} className="chat-message mb-2">
-                                            <strong>{msg.User?.username || user.username}:</strong> {msg.content}
-                                            <span className="text-muted small ms-2 chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
+                                        <div 
+                                            key={msg.id} 
+                                            className="chat-message mb-2" 
+                                            style={{ backgroundColor: msg.user_id === user.id ? 'lightgreen' : 'transparent', padding: '5px', borderRadius: '5px' }}
+                                        >
+                                            <strong>
+                                                {msg.user_id === user.id ? user.username : `Player ${msg.user_id}`}:
+                                            </strong>
+                                            <div>
+                                                <span className="text-muted small chat-timestamp">{timeAgo(new Date(msg.createdAt))}</span>
+                                            </div>
+                                            <div>{` ${msg.content}`}</div>
                                         </div>
                                     ))}
+                                    <div ref={messagesEndRef} />
                                 </div>
                                 <div className="chat-input-container mt-3">
                                     <input
@@ -222,11 +254,23 @@ const Home: React.FC = () => {
                                         className="form-control chat-input"
                                         value={messageContent}
                                         onChange={(e) => setMessageContent(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                sendMessage(); // Call sendMessage when Enter is pressed
+                                            }
+                                        }}
                                         placeholder="Type a message..."
                                     />
                                     <button className="btn btn-primary mt-2 chat-send-btn" onClick={sendMessage}>Send</button>
+                                    
                                 </div>
+                                <button onClick={() => setIsVoiceChatVisible(!isVoiceChatVisible)}>
+                            {isVoiceChatVisible ? "Stop Voice Chat" : "Start Voice Chat"}
+                        </button>
+                        <VoiceChat roomId={currentRoom} />
+
                             </div>
+                            
                         )}
                     </div>
                 )}
