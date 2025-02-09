@@ -41,20 +41,13 @@ db.Room.belongsToMany(db.User, { through: db.UserRoom, foreignKey: 'room_id' });
 db.Game.belongsTo(db.Category, { foreignKey: 'category_id' });
 db.Category.hasMany(db.Game, { foreignKey: 'category_id' });
 
-// db.sequelize.sync({ force: true  } )
-//   .then(() => {
-//     console.log('Database synchronized');
-//   })
-//   .catch((err) => {
-//     console.error('Error synchronizing database:', err);
-//   });
-// db.sequelize.sync({ force: false , alter: false } )
-// db.sequelize.sync({ force: true  } )
-//   .then(() => {
-//     console.log('Database synchronized');
-//   })
-//   .catch((err) => {
-//     console.error('Error synchronizing database:', err);
-//   });
+
+db.sequelize.sync({ force: false , alter: false } )
+  .then(() => {
+    console.log('Database synchronized');
+  })
+  .catch((err) => {
+    console.error('Error synchronizing database:', err);
+  });
 
 module.exports = db;
