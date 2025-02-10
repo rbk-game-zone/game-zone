@@ -9,7 +9,8 @@ import {Game} from "../types/tables/game"
 import {Room} from "../types/tables/room"
 import {Message} from "../types/tables/message"
 import { User } from "../types/tables/user"
-
+import ScoreFinal from './scorefinal'; // Import the ScoreFinal component
+import './Home.css'
 import VoiceChat from './VoiceChat';
 
 
@@ -163,6 +164,8 @@ const Home: React.FC = () => {
                 <FaComments size={24} /> {isChatVisible ? "Close Chat" : "Chat"}
             </button>
 
+            {/* Display ScoreFinal component */}
+
             {!isChatVisible && (
                 <>
                     <h1 id="gamelobby" className="text-center mb-4">Game Lobby</h1>
@@ -199,6 +202,8 @@ const Home: React.FC = () => {
                                     </div>
                                 </div>
                             ))}
+                                        <ScoreFinal />
+
                         </div>
                     )}
                 </>
@@ -233,7 +238,7 @@ const Home: React.FC = () => {
                                         <div 
                                             key={msg.id} 
                                             className="chat-message mb-2" 
-                                            style={{ backgroundColor: msg.user_id === user.id ? 'lightblue' : 'transparent', padding: '5px', borderRadius: '5px' }}
+                                            style={{ backgroundColor: msg.user_id === user.id ? 'lighgreen' : 'transparent', padding: '5px', borderRadius: '5px' }}
                                         >
                                             <strong>
                                                 {msg.user_id === user.id ? user.username : `Player ${msg.user_id} `} :
@@ -274,6 +279,7 @@ const Home: React.FC = () => {
                     </div>
                 )}
             </div>
+
         </div>
     );
 };

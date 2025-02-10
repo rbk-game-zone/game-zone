@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
-   
+import './ScoreFinal.css';
+import ScorePopup from './ScorePopup';
 
-function scorefinal() {
+function ScoreFinal() {
     const [rankedScores, setRankedScores] = useState([]);
+    const [selectedScore, setSelectedScore] = useState(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
     const API_URL = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         const fetchScores = async () => {
             try {
@@ -17,23 +21,28 @@ function scorefinal() {
 
         fetchScores();
     }, []);
-  return (
-    <div style={{color:"red"}} className="score-section">
-    <h1>Ranked Scores</h1>
-    {rankedScores.map((game) => (
-        <div key={game.id}>
-            <h2>{game.game}</h2>
-            <ul>
-                {game.scores.map((score) => (
-                    <li key={score.rank}>
-                        {score.rank} : {score.user} Score: {score.score}
-                    </li>
-                ))}
-            </ul>
+
+    const handleScoreClick = (scoreDetails) => {
+        setSelectedScore(scoreDetails);
+        setIsPopupOpen(true);
+    };
+
+    const closePopup = () => {
+        setIsPopupOpen(false);
+        setSelectedScore(null);
+    };
+
+    return (
+        <div className="score-section">
+            <h1 className="score-title">🏆 Ranked Scores 🏆</h1>
+            {rankedScores.map((game) => (
+                <div key={game.id} className="game-container">
+                    <h2 className="game-title" onClick={() => handleScoreClick(game)}>{game.game}</h2>
+                </div>
+            ))}
+            <ScorePopup isOpen={isPopupOpen} onClose={closePopup} scoreDetails={selectedScore} />
         </div>
-    ))}
-</div>
-  )
+    );
 }
 
-export default scorefinal
+export default ScoreFinal

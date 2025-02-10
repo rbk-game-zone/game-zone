@@ -4,7 +4,7 @@ import { Category } from "../types/tables/category";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-
+import './navbar.css'
 function Navbar({ fetchGameByCategory }: { fetchGameByCategory: any }) {
   const [categories, setCategories] = useState([]);
 
