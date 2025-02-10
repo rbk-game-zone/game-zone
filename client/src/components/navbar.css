@@ -1,0 +1,45 @@
+.navbar {
+    background-color: #1a1a1a; /* Dark background */
+    border-bottom: 2px solid #00ff00; /* Neon green border */
+    font-family: 'Orbitron', sans-serif; /* Futuristic font */
+}
+
+.navbar-brand {
+    color: #00ff00 !important; /* Neon green */
+    font-size: 1.8rem;
+    text-shadow: 0 0 5px #00ff00; /* Glow effect */
+}
+
+.nav-link {
+    color: #ccc !important; /* Light gray for readability */
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #00ff00 !important; /* Neon green on hover */
+}
+
+.dropdown-menu {
+    background-color: #262626; /* Slightly lighter dark background */
+    border: 1px solid #00ff00; /* Neon green border */
+}
+
+.dropdown-item {
+    color: #ccc; /* Light gray */
+}
+
+.dropdown-item:hover {
+    background-color: #333; /* Darker background on hover */
+    color: #00ff00; /* Neon green */
+}
+
+.btn-secondary {
+    background-color: #333; /* Dark gray */
+    border: 1px solid #00ff00; /* Neon green border */
+    color: #00ff00; /* Neon green */
+}
+
+.btn-secondary:hover {
+    background-color: #00ff00; /* Neon green on hover */
+    color: #1a1a1a; /* Dark text */
+}

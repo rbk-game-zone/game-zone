@@ -1,0 +1,65 @@
+.container {
+    background-color: #1a1a1a; /* Dark background */
+    color: #ccc; /* Light gray text */
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #00ff00; /* Neon green border */
+}
+
+.card {
+    background-color: #262626; /* Slightly lighter dark background */
+    border: 1px solid #00ff00; /* Neon green border */
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); /* Green glow on hover */
+}
+
+.card-title {
+    color: #00ff00; /* Neon green */
+    font-family: 'Orbitron', sans-serif; /* Futuristic font */
+}
+
+.card-description {
+    color: #ccc; /* Light gray */
+}
+
+.chat-toggle-btn {
+    background-color: #00ff00; /* Neon green */
+    color: #1a1a1a; /* Dark text */
+    border: none;
+    font-family: 'Orbitron', sans-serif; /* Futuristic font */
+}
+
+.chat-toggle-btn:hover {
+    background-color: #00cc00; /* Darker green on hover */
+}
+
+.chat-container {
+    background-color: #262626; /* Slightly lighter dark background */
+    border: 1px solid #00ff00; /* Neon green border */
+    color: #ccc; /* Light gray text */
+}
+
+.chat-box {
+    background-color: #333; /* Dark gray */
+    border: 1px solid #00ff00; /* Neon green border */
+}
+
+.chat-input {
+    background-color: #333; /* Dark gray */
+    border: 1px solid #00ff00; /* Neon green border */
+    color: #ccc; /* Light gray text */
+}
+
+.chat-send-btn {
+    background-color: #00ff00; /* Neon green */
+    color: #1a1a1a; /* Dark text */
+    border: none;
+}
+
+.chat-send-btn:hover {
+    background-color: #00cc00; /* Darker green on hover */
+}

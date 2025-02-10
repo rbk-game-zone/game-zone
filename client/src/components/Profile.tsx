@@ -5,7 +5,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { updateUser } from '../store/authSlice';
 import { RootState } from '../store/store';
-
+import './Profile.css'
 const Profile = () => {
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   const user = storedUser || useSelector((state: RootState) => state.auth.user);

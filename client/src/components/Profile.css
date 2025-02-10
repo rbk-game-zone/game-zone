@@ -1,0 +1,62 @@
+.container {
+    background-color: #1a1a1a; /* Dark background */
+    color: #ccc; /* Light gray text */
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #00ff00; /* Neon green border */
+}
+
+.card {
+    background-color: #262626; /* Slightly lighter dark background */
+    border: 1px solid #00ff00; /* Neon green border */
+}
+
+.avatar-img {
+    border: 2px solid #00ff00; /* Neon green border */
+}
+
+.profile-name {
+    color: #00ff00; /* Neon green */
+    font-family: 'Orbitron', sans-serif; /* Futuristic font */
+}
+
+.form-control {
+    background-color: #333; /* Dark gray */
+    border: 1px solid #00ff00; /* Neon green border */
+    color: #ccc; /* Light gray text */
+}
+
+.form-control:focus {
+    border-color: #00ff00; /* Neon green border */
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.5); /* Green glow */
+}
+
+.btn-primary {
+    background-color: #00ff00; /* Neon green */
+    color: #1a1a1a; /* Dark text */
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #00cc00; /* Darker green on hover */
+}
+
+.btn-secondary {
+    background-color: #333; /* Dark gray */
+    border: 1px solid #00ff00; /* Neon green border */
+    color: #00ff00; /* Neon green */
+}
+
+.btn-secondary:hover {
+    background-color: #00ff00; /* Neon green on hover */
+    color: #1a1a1a; /* Dark text */
+}
+
+.btn-info {
+    background-color: rgba(255, 0, 0, 0.4); /* Red with transparency */
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: rgba(255, 0, 0, 0.6); /* Darker red on hover */
+}
